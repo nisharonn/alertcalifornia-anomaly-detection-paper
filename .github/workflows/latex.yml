@@ -1,13 +1,29 @@
 name: Compile LaTeX
 
-on: [push]
+on:
+  push:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Compile LaTeX
-        uses: xu-cheng/latex-action@v2
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: install latex environment
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            texlive-full \
+            latexmk
+
+      - name: compile latex document
+        run: |
+          latexmk -xelatex -interaction=nonstopmode -halt-on-error report.tex
+
+      - name: upload pdf
+        uses: actions/upload-artifact@v4
         with:
-          root_file: report.tex
+          name: report-pdf
+          path: report.pdf
