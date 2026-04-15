@@ -1,10 +1,5 @@
-% !TEX TS-program = xelatex
-% !BIB TS-program = bibtex
 \documentclass[12pt,letterpaper]{article}
-% \usepackage{graphicx}
 \usepackage[hidelinks]{hyperref}
-% \usepackage[nameinlink,capitalize]{cleveref}
-% \usepackage{csquotes} 
 \usepackage[printonlyused]{acronym} 
 \usepackage{wrapfig}
 \setlength{\columnsep}{15pt} 
@@ -86,7 +81,7 @@ More recently, \ac{ViT}s have emerged as a powerful framework for image-based an
 
 State-of-the-art methods also do not fully align with or exploit the specific characteristics of outdoor \ac{QoS} anomaly detection systems. In particular, many existing works adopt a semi-supervised or unsupervised approach due to the typically imbalanced ratio of normal to anomalous occurrences. However, in environmental monitoring systems, \ac{QoS} anomalies such as persistent debris, recurring solar glare, or nightly fog coverage all occur with greater regularity. These create more balanced datasets that are better suited for manual annotations. It also introduces an opportunity to adopt a fully supervised framework that explicitly learns representations of image quality. 
 
-Capitalizing on this structure, we leverage a fully supervised \ac{ViT} architecture that learns latent embeddings optimized for \ac{QoS} anomaly prediction. Our framework explicitly separates representation learning from classification using two components: a \ac{ViT}-Base encoder that maps input images to latent-space embeddings, and a lightweight multilayer classification head that directly predicts the presence of anomalies on those embeddings. To enforce separability in the embedding space, we adopt the triplet margin loss function, which enables discrimination across diverse environmental conditions by optimizing relative distances between samples. This loss function has demonstrated success in similar representation learning tasks such as face recognition \cite{Schroff_2015_CVPR}. We preserve the interpretable latent representations to investigate their semantic structure and apply \ac{PCA} to examine the first five principal components. Specifically, we explore how these components relate to interpretable attributes including illumination, time of day, and season. This work provides insight into the types of environmental variation encoded by the model and establishes a strong foundation for discriminative embedding-based detection in future applications of \ac{QoS} monitoring.
+Capitalizing on this structure, we leverage a fully supervised \ac{ViT} architecture that learns latent embeddings optimized for \ac{QoS} anomaly prediction. Our framework explicitly separates representation learning from classification using two components: a \ac{ViT}-Base encoder that maps input images to latent-space embeddings, and a lightweight multilayer classification head that directly predicts the presence of anomalies on those embeddings. To enforce separability in the embedding space, we adopt the triplet margin loss function, which enables discrimination across diverse environmental conditions by optimizing relative distances between samples. This loss function has demonstrated success in similar representation learning tasks such as face recognition \cite{Schroff_2015_CVPR}. We preserve the interpretable latent representations to investigate their semantic structure and apply \ac{PCA} to examine the first five principal components. Specifically, we explore how these components relate to interpretable attributes, including illumination, time of day, and season. This work provides insight into the types of environmental variation encoded by the model and establishes a strong foundation for discriminative embedding-based detection in future applications of \ac{QoS} monitoring.
 
 \section{Methods}
 
