@@ -249,7 +249,7 @@ We separate each model $\mathbf{z_i} \in \{\mathbf{z_T}, \mathbf{z_D}, \mathbf{z
 
 Each encoder $\mathbf{E_i}$ utilizes the \ac{ViT} architecture to map each image into a lower-dimensional feature space. We initialize this component’s weights as the weights of our Quarter 1 encoder, whose training process is outlined in Appendix~\ref{app:q1encoder}. By default, a ViT (as implemented by Dosovitskiy et al.) consists of patch embedding, position embedding, transformer encoder, and \ac{MLP} classification head segments. Figure~\ref{fig:vit_model}, from Dosovitskiy et al., demonstrates this architecture visually. We modify our encoder’s architecture by removing the \ac{MLP} classification head (shown in orange in Figure~\ref{fig:vit_model}), so its outputs come directly from the transformer encoder layer. The specific \ac{ViT} architecture we utilize is ViT-Base, so these outputs are 768-dimensional \cite{dosovitskiy2021an}. Each $\mathbf{E_i}$ shares identical architecture; they differ only in the values of their weights. 
 
-\begin{figure}[H]
+\begin{figure}[h!]
     \centering
     \includegraphics[width=0.9\linewidth]{new_figures/vit_model.png}
     \caption{Model overview of the Vision Transformer, from Dosovitskiy et al \cite{dosovitskiy2021an}. The input images are split into patches, linearly embedded, positionally embedded, and sent into a transformer encoder. The original paper also uses an \ac{MLP} head after this, but we remove this.}
