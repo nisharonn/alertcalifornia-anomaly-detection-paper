@@ -15,7 +15,11 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            texlive-full \
+            texlive-latex-recommended \
+            texlive-latex-extra \
+            texlive-fonts-recommended \
+            texlive-bibtex-extra \
+            biber \
             latexmk
 
       - name: compile latex document
