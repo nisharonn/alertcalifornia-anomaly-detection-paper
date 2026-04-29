@@ -59,7 +59,7 @@ sorting=none]{biblatex}
 
 %%%%%% Abstract %%%%%%
 \begin{abstract}
-Large-scale environmental monitoring networks rely on hundreds of geographically distributed cameras that operate under diverse conditions. For these cameras to reliably support hazard response operations, they must not only detect extreme events but also maintain consistent image quality across time and environmental variability. While the field has well-established models for extreme event detection, there has been little development of systems that identify image quality-related anomalies. In particular, there is a need to detect degradation factors such as debris, glare, fog, bluriness, and low-contrast imagery, which may arise from both environmental conditions and internal camera issues and can significantly reduce camera visibility. To address this gap, we present a camera health monitoring system for the University of California San Diego’s ALERTCalifornia \footnote{\url{https://alertcalifornia.org/}} network. Our approach uses a \ac{ViT}-Base encoder and an \ac{MLP} classification head to detect frame-level anomalies, enabling automatic, continuous assessment of camera performance. With an overall accuracy of $93.94\%$ on cameras in the training set and $74.05\%$ on unseen cameras, we demonstrate that machine-learning-based anomaly detection can provide robust camera health assessments, thereby improving the long-term sustainability and reliability of critical environmental monitoring operations. 
+Large-scale environmental monitoring networks rely on hundreds of geographically distributed cameras that operate under diverse conditions. For these cameras to reliably support hazard response operations, they must not only detect extreme events but also maintain consistent image quality across time and environmental variability. While the field has well-established models for extreme event detection, there has been comparatively little development of systems that identify image quality-related anomalies. In particular, there is a need to detect degradation factors such as debris, glare, fog, blur, and low-contrast imagery, which may arise from both environmental conditions and internal camera issues, and can significantly reduce camera visibility. To address this gap, we present a camera health monitoring framework for the University of California San Diego’s ALERTCalifornia \footnote{\url{https://alertcalifornia.org/}} network. Our approach uses a \ac{ViT}-Base encoder and an \ac{MLP} classification head to detect frame-level anomalies, enabling automatic, continuous assessment of camera performance. Evaluated across geographically distributed cameras, our model achieves an overall accuracy of $93.94\%$ on training cameras and $74.05\%$ on unseen cameras, demonstrating its ability to generalize across geographic regions. These results highlight the potential for machine-learning-based anomaly detection to provide robust camera health assessments, thereby improving the long-term sustainability and reliability of critical environmental monitoring operations. 
 
 \end{abstract}
 
@@ -83,7 +83,7 @@ More recently, \ac{ViT}s have emerged as a powerful framework for image-based an
 
 State-of-the-art methods also do not fully align with or exploit the specific characteristics of outdoor \ac{QoS} anomaly detection systems. In particular, many existing works adopt a semi-supervised or unsupervised approach due to the typically imbalanced ratio of normal to anomalous occurrences. However, in environmental monitoring systems, \ac{QoS} anomalies such as persistent debris, recurring solar glare, or nightly fog coverage all occur with greater regularity. These create more balanced datasets that are better suited for manual annotations. It also introduces an opportunity to adopt a fully supervised framework that explicitly learns representations of image quality. 
 
-Capitalizing on this structure, we leverage a fully supervised \ac{ViT} architecture that learns latent embeddings optimized for \ac{QoS} anomaly prediction. Our framework explicitly separates representation learning from classification using two components: a \ac{ViT}-Base encoder that maps input images to latent-space embeddings, and a lightweight multilayer classification head that directly predicts the presence of anomalies on those embeddings. To enforce separability in the embedding space, we adopt the triplet margin loss function, which enables discrimination across diverse environmental conditions by optimizing relative distances between samples. This loss function has demonstrated success in similar representation learning tasks such as face recognition \cite{Schroff_2015_CVPR}. We preserve the interpretable latent representations to investigate their semantic structure and apply \ac{PCA} to examine the first five principal components. Specifically, we explore how these components relate to interpretable attributes, including illumination, time of day, and season. This work provides insight into the types of environmental variation encoded by the model and establishes a strong foundation for discriminative embedding-based detection in future applications of \ac{QoS} monitoring.
+Capitalizing on this structure, we leverage a fully supervised \ac{ViT} architecture that learns latent embeddings optimized for \ac{QoS} anomaly prediction. Our framework explicitly separates representation learning from classification using two components: a \ac{ViT}-Base encoder that maps input images to latent-space embeddings, and a lightweight multilayer classification head that directly predicts the presence of anomalies on those embeddings. To enforce separability in the embedding space, we adopt the triplet margin loss function, which enables discrimination across diverse environmental conditions by optimizing relative distances between samples. This loss function has demonstrated success in similar representation learning tasks such as face recognition \cite{Schroff_2015_CVPR}. We evaluate the proposed framework on unseen camera locations, achieving an overall accuracy of 74.05\%, demonstrating its ability to generalize across different environments conditions. These results establish a strong baseline for \ac{QoS} anomaly detection in large-scale environmental monitoring systems. 
 
 \section{Materials and Methods}
 
@@ -148,37 +148,14 @@ Level 4 - Severe & 376  & 94   & 168  & 639  & 31  & 14  & 11  & 56 \\
 \end{threeparttable}
 \end{table}
 
-\begin{table}[b]
-    \caption{This is an example table.}    
-    \centering
-    \begin{tabular}{ccc}
-            \hline
-            Column 1 & Column 2 & Column 3 \\  
-            \hline
-            Cell 1 & Cell 2 & Cell 3\\ 
-            Cell 4 & Cell 5 & Cell 6 \\
-            \hline
-            \end{tabular}
+To train our initial model, we focus on three cameras located in San Diego County: Axis-CoronadoHillS \footnote{\url{https://cameras.alertcalifornia.org/?pos=38.6603_-122.1906_10&id=Axis-CoronadoHillsS}}, Axis-PalomarObs1 \footnote{\url{https://cameras.alertcalifornia.org/?pos=33.3600_-116.8600_10&id=Axis-PalomarObs1}}, and Axis-MesaGrandeNorth \footnote{\url{https://cameras.alertcalifornia.org/?pos=33.1900_-116.7600_10&id=Axis-MesaGrandeNorth}}. Throughout the rest of this paper, we will refer to these three locations as Coronado Hills, Palomar Observatory, and Mesa Grande, respectively. These cameras capture different landscapes and varying degrees of seasonal change, making them suitable for our objective. Coronado Hills and Mesa Grande are cameras that do not capture significant seasonal changes in the environment. Palomar Observatory captures notable seasonal changes, such as snow, ice, and changes in foliage color. This variety provides extra flexibility to control for seasonal effects in our model. 
 
-    \label{tab:frame_counts}
-\end{table}
-
-
-To train our initial model, we focus on three cameras located in San Diego County: Axis-CoronadoHillS \footnote{\url{https://cameras.alertcalifornia.org/?pos=38.6603_-122.1906_10&id=Axis-CoronadoHillsS}}, Axis-PalomarObs1 \footnote{\url{https://cameras.alertcalifornia.org/?pos=33.3600_-116.8600_10&id=Axis-PalomarObs1}}, and Axis-MesaGrandeNorth \footnote{\url{https://cameras.alertcalifornia.org/?pos=33.1900_-116.7600_10&id=Axis-MesaGrandeNorth}}. Throughout the rest of this paper, we will refer to these three locations as Coronado Hills, Palomar Observatory, and Mesa Grande, respectively. These cameras capture different landscapes and varying degrees of seasonal change, making them suitable for our objective. We select Coronado Hills and Mesa Grande as cameras that do not capture significant seasonal changes in the environment. We select Palomar Observatory as a seasonal camera that captures notable seasonal changes, such as snow, ice, and changes in foliage color. This provides extra flexibility to control for seasonal effects in our model. Example images from these locations are shown in ~\ref{fig:level_examples}. 
-
-In the testing set, we introduce three additional cameras: Axis-ToroPeak1 \footnote{\url{https://cameras.alertcalifornia.org/?pos=38.6603_-122.1906_10&id=Axis-ToroPeak1}}, Axis-Dewdrop1 \footnote{\url{https://cameras.alertcalifornia.org/?pos=33.5202_-116.4297_10&id=Axis-Dewdrop1}}, and Axis-Berryessa \footnote{\url{https://cameras.alertcalifornia.org/?pos=33.3598_-116.8595_10&id=Axis-Berryessa}}, which we refer to as Toro Peak, Dew Drop, and Berryessa. In this set, Toro Peak and Dew Drop are seasonal cameras, while Berryessa does not show substantial change across seasons. We select Dew Drop and Berryessa, located in Amador and Yolo Counties in northern California, to evaluate the model's ability to generalize across geographic regions. Toro Peak, also located in southern California in Riverside County, is used to assess seasonal effects in a similar area. This configuration allows us to assess model performance across both seasonal variability and geographic context. We present the general location of each camera site in Figure~\ref{fig:cam_locs}. 
-
-\begin{figure}
-    \centering
-    \includegraphics[width=0.5\linewidth]{new_figures/loc_map.png}
-    \caption{Geographic location of cameras in our dataset. Palomar Observatory, Mesa Grande, and Coronado Hills are located in San Diego County. Dew Drop, Berryessa, and Toro Peak are located in Amador, Yolo, and Riverside Counties, respectively.}
-    \label{fig:cam_locs}
-\end{figure}
+In the testing set, we introduce three additional cameras: Axis-ToroPeak1 \footnote{\url{https://cameras.alertcalifornia.org/?pos=38.6603_-122.1906_10&id=Axis-ToroPeak1}}, Axis-Dewdrop1 \footnote{\url{https://cameras.alertcalifornia.org/?pos=33.5202_-116.4297_10&id=Axis-Dewdrop1}}, and Axis-Berryessa \footnote{\url{https://cameras.alertcalifornia.org/?pos=33.3598_-116.8595_10&id=Axis-Berryessa}}, which we refer to as Toro Peak, Dew Drop, and Berryessa. In this set, Toro Peak and Dew Drop are seasonal cameras, while Berryessa does not show substantial change across seasons. We select Dew Drop and Berryessa, located in Amador and Yolo Counties in Northern California, to evaluate the model's ability to generalize across geographic regions. Toro Peak, also located in Southern California in Riverside County, is selected to assess seasonal effects in a similar area. This configuration allows us to assess model performance across both seasonal variability and geographic context. Example images from each locations is shown in Figure~\ref{fig:level_examples}. 
 
 \subsection{Label Definition and Annotation}
 \label{sec:datalabeling}
 
-To construct our labeled dataset for supervised learning, we design a camera-agnostic labeling scheme. Since multiple individuals participate in the data labeling process, establishing a strict labeling rubric is crucial to maintain consistency. We introduce a 4-point ordinal scale to capture varying severities of observed anomalies. We define the \ac{ORR} of an image as the non-sky portion that contains terrain, infrastructure, and other elements critical to response operations. The scale is defined as follows:
+To construct our labeled dataset for supervised learning, we design a camera-agnostic labeling scheme with a strict rubric to maintain consistency across four annotators. The 4-point ordinal scale is outlined as follows. We define the \ac{ORR} of an image as the non-sky portion that contains terrain, infrastructure, and other elements critical to response operations.
 
 \begin{itemize}
     \item\textbf{Level 1 – Clear:} Normal operation of the camera with no observable obstruction or quality issues. The camera is fully reliable for response operations.
@@ -194,10 +171,9 @@ To construct our labeled dataset for supervised learning, we design a camera-agn
     \label{fig:level_examples}
 \end{figure}
 
+The flowchart in Figure~\ref{fig:flowchart} provides additional structure to guide our labeling decisions. Each image is reviewed by a minimum of three annotators to ensure labeling consistency and reduce subjective bias. The final label is determined by majority opinion. Images with conflicting or tied labels are separately addressed in a team meeting to reach a consensus. 
 
-The flowchart in Figure~\ref{fig:flowchart} outlines the framework used to guide our labeling decisions. To further ensure labeling consistency and reduce subjective bias, we require each image to be reviewed by at least three annotators. The final label is determined by the majority opinion. For images in which annotators disagree or have tied decisions, we hold a meeting to collectively review and reach a consensus label. 
-
-We obtain a total of 6,269 labeled images for our training set (see Table~\ref{tab:frame_counts} for complete counts). Examples from each level using this labeling scheme can be seen in Figure~\ref{fig:level_examples}.
+We obtain a total of 6,269 labeled images for our training set (see Table~\ref{tab:frame_counts} for complete counts). Figure~\ref{fig:level_examples} highlights examples of each level across cameras using this labeling scheme. 
 
 \begin{figure}[h!]
     \centering
@@ -212,32 +188,13 @@ Once we obtain our labeled dataset, we downsample and standardize the images to 
 
 Our training process can be divided into two phases: \textbf{objective selection} and \textbf{multi-camera training}. 
 
-During objective selection, we evaluate the effectiveness of different training objectives on a single camera. We train three baseline models using three different loss functions: triplet margin loss (covered in Appendix~\ref{app:marginloss}), DeepSAD loss (covered in Appendix~\ref{app:deepsad}), and Hierarchical SAD (H-SAD) loss (covered in Appendix~\ref{app:hsad}). Triplet margin loss is a supervised objective, while DeepSAD and H-SAD are semi-supervised objectives. 
+During objective selection, we evaluate the effectiveness of different training objectives on a single camera. We train three baseline models using three different loss functions: triplet margin loss (see Appendix~\ref{app:marginloss}), DeepSAD loss (see Appendix~\ref{app:deepsad}), and Hierarchical SAD (H-SAD) loss (see Appendix~\ref{app:hsad}). Triplet margin loss is a supervised objective, while DeepSAD and H-SAD are semi-supervised objectives. 
 
-To ensure robust evaluation, we implement a stratified 5-fold cross-validation framework with a held out test fold. The dataset is partitioned into five folds using stratified sampling based on class labels and camera location to ensure that each fold has a representative distribution of anomaly severity and geographic location. Four folds are used for cross-validation while the final fold is held out as a test set and is not used during model selection.
+To ensure robust evaluation, we implement a stratified 5-fold cross-validation framework with a held out test fold. The dataset is partitioned into five folds using stratified sampling based on class labels and camera location so that each fold has a representative distribution of anomaly severity and geographic location. Four folds are used for cross-validation, while the final fold is held out as a test set and is not used during model selection.
 
-Within each fold, we train a two-stage pipeline consisting of an encoder and a classification head. The encoder is trained on the training folds only, after which embeddings are computed for both training and validation sets. A classification head is then trained on the training embeddings and evaluated on the corresponding validation embeddings. Model performance is measured using classification accuracy on both training and validation sets. After completing all cross-validation iterations, we compute the accuracy mean and standard deviation across the validation folds. 
+Within each fold, we train a two-stage pipeline consisting of an encoder and a classification head. The encoder is trained on the training folds only, after which embeddings are computed for both training and validation sets. A classification head is then trained on the training embeddings and evaluated on the corresponding validation embeddings. Model performance is measured using classification accuracy, precision, and recall on both training and validation sets. After completing all cross-validation iterations, we compute the mean and standard deviation of metrics across the validation folds. 
 
-We refer to the models trained using triplet loss, DeepSAD loss, and H-SAD loss as $\mathbf{z_T}$,  $\mathbf{z_D}$, and $\mathbf{z_H}$ respectively. Each model takes a set of processed images as input and outputs a classification for each one, though the dimensionality of these outputs varies across models. The architectures of the models are discussed further in Section~\ref{sec:architecture}. These models are trained solely on images from the Coronado Hills camera. We will refer to the entire Coronado Hills training set of images as $\mathbf{C}$, with $\mathbf{C_U}$ denoting the unlabeled portion and $\mathbf{C_L}$ denoting the labeled portion. The size of these datasets is as follows:
-
-\begin{table}[h!]
-\centering
-
-\caption{Training set sizes computed as 60\% of each dataset partition.}
-\label{tab:train_split_counts}
-
-\begin{tabular}{lccc}
-\toprule
-\textbf{Set} & \textbf{Original size} & \textbf{Computation} & \textbf{Training size} \\
-\midrule
-$\mathbf{C}$   & 7488 & $\lfloor 7488 \times 0.6 \rfloor$ & 4492 \\
-$\mathbf{C_U}$ & 5174 & $\lfloor 5174 \times 0.6 \rfloor$ & 3104 \\
-$\mathbf{C_L}$ & 2314 & $\lfloor 2314 \times 0.6 \rfloor$ & 1388 \\
-\bottomrule
-\end{tabular}
-
-\end{table}
-
+We refer to the models trained using triplet loss, DeepSAD loss, and H-SAD loss as $\mathbf{z_T}$,  $\mathbf{z_D}$, and $\mathbf{z_H}$ respectively. Each model takes a set of processed images as input and outputs a classification for each one, though the dimensionality of these outputs varies across models. The architectures of the models are discussed further in Section~\ref{sec:architecture}. These models are trained solely on images from the Coronado Hills camera. The full labeled dataset is denoted as $\mathbf{C}$, with the labeled and unlabeled subsets represented as $\mathbf{C_L}$ and $\mathbf{C_U}$, respectively.
 
 While training models $\mathbf{z_T}$ and $\mathbf{z_D}$, we binarize our data. Although a frame classified as a Minor Anomaly still constitutes a slight degradation in its quality, this degradation is not severe enough to warrant immediate attention, unlike Major or Severe Anomalies (see Figure~\ref{fig:level_examples}). To reflect this, we aggregate Clear and Minor Anomaly images under the definition of Normal and aggregate Major Anomaly and Severe Anomaly images under the definition of Abnormal. Meanwhile, $\mathbf{z_H}$ is trained using the original 4-level classification. We develop the H-SAD objective to explicitly accept 4 parameters in order to evaluate the effectiveness of a more precise labeling scheme. 
 
@@ -308,7 +265,7 @@ Each $\mathbf{y_i}$ can be used to compute a classification for each image in $\
 
 Our analysis determined the optimal objective function to be the triplet margin loss. Thus, for our finalized model, we construct a model $\mathbf{z'}$, consisting of components $\mathbf{E'}$ and $\mathbf{H'}$.
 
-We first train $\mathbf{E'}$ on the full set of labeled training data across all three cameras, denoted as $\mathbf{I}$, where $\left|\mathbf{I}\right| = \lfloor{6269 \times 0.6}\rfloor = 3761$. The corresponding labels are binarized in the same manner discussed in Section~\ref{sec:datacollection}. For the hyperparameters, we choose a margin of 0.19 and train for 10 epochs, as these parameters yield the best separation between Normal and Abnormal points in the embedding space. Once this is complete, we obtain a set of embeddings $\mathbf{e'} = \mathbf{E'}(\mathbf{I})$, where $\left|\mathbf{e'}\right| = 3761$. 
+We first train $\mathbf{E'}$ on the full set of labeled training data across all three cameras, denoted as $\mathbf{I}$. The corresponding labels are binarized in the same manner discussed in Section~\ref{sec:datacollection}. For the hyperparameters, we choose a margin of 0.19 and train for 10 epochs, as these parameters yield the best separation between Normal and Abnormal points in the embedding space. Once this is complete, we obtain a set of embeddings $\mathbf{e'} = \mathbf{E'}(\mathbf{I})$, where $\left|\mathbf{e'}\right| = 3761$. 
 
 Finally, we train $\mathbf{H'}$ on $\mathbf{I}$ using the same cross-entropy loss function used during objective selection. The outputs returned by $\mathbf{H'}$ are two-dimensional and classify points as Normal or Abnormal. The full model pipeline is illustrated in Figure~\ref{fig:model_pipeline}.
 
@@ -711,17 +668,6 @@ Accuracy & 0.5505 & 0.8182 & 0.8254 & 0.7405 \\
 
 \end{table}
 
-
-\subsubsection{Model Scalability}
-We additionally run tests to assess the model's potential for real-time inference if deployed at scale. Figure~\ref{fig:throughput} illustrates the inference time as a function of batch size. We conduct these tests on a single \ac{GPU} (NVIDIA GeForce RTX 3070 Ti). 
-
-\begin{figure}[h!]
-    \centering
-    \includegraphics[width=0.6\linewidth]{new_figures/fixed_throughput_results.png}
-    \caption{The time taken to run inference for various batch sizes.}
-    \label{fig:throughput}
-\end{figure}
-
 \section{Discussion}
 
 The results demonstrate that embedding-based anomaly detection can effectively identify image quality degradations while preserving interpretable latent representations. Beyond classification performance, the learned embeddings reveal meaningful semantic structure related to image quality and environmental variability. In this section, we discuss the key findings of the baseline model comparison, examine the structure of the learned embeddings, and analyze the model’s ability to generalize across different camera locations. We also highlight the key limitations of our study and directions for future work. 
@@ -730,16 +676,6 @@ The results demonstrate that embedding-based anomaly detection can effectively i
 Figure~\ref{fig:baseline_3ds} visualizes the 3D projections learned by the three baseline models. A curved, double C-shaped structure appears within each embedding space. Despite being trained with different objective functions, the models broadly learn latent representations that capture similar visual patterns. Notably, these C-shaped structures contain samples from all label classes, indicating that dominant patterns in the embedding space are not unique to class labels.
 
 Triplet loss demonstrates the strongest performance with a classification accuracy of 0.9333 compared to DeepSAD’s 0.9136 and H-SAD’s 0.7387 (Table~\ref{tab:train_val_accs}). The large gap between H-SAD and its alternatives likely reflects differences in label structure. Triplet loss and DeepSAD are trained using binary Normal/Abnormal labels, while H-SAD uses a custom 4-point severity scale. Learning more levels requires capturing more complex and nuanced ordinal distinctions in image quality degradation, which can make the classification task inherently more difficult. Based on these results, we adopt triplet loss for our final multi-camera model. 
-
-
-
-\subsection{Structure of the Learned Embedding}
-
-The projection plots of the first few principal components of the embedding space reveal how the model organizes visual information. Figures~\ref{fig:final_label_3ds} and \ref{fig:2d_label_pc1s} show that Normal and Abnormal samples occupy distinct regions, with a clear boundary along PC1. This indicates that the encoder learns features sensitive to obstructions such as fog, glare, raindrops, debris, etc., that disrupt the \ac{ORR} of an image. Normal samples form more dispersed clusters across PC2, PC3, and PC5, reflecting greater intra-class variability and a wider range of environmental conditions. In contrast, Abnormal samples occupy a compact space along these components, suggesting that PC2, PC3, and PC5 primarily encode variations relating to Normal images. Notably, the opposite structure appears along PC4, with dispersed Abnormal points and compact Normal points. This pattern suggests that PC4 is the only top-five principal component that captures comparatively greater variation in image quality across anomalous frames. Variation along these principal components is further emphasized by cross-like structures in Figure~\ref{fig:2d_label_extra}. Together, these patterns indicate that the learned embeddings distinguish Normal from Abnormal samples and capture the diversity of visual conditions within each class.
-
-Daytime attributes provide further insight into how the model represents differences in lighting conditions. In Figure~\ref{fig:daytime_2d}, Day and Night samples in panels (a) and (d) form similar structures that differ only in their positions along the axes, suggesting that PC2 and PC4 encode illumination-related variability. Night frames generally occupy higher values on PC2 and lower values on PC4 while Day frames shift in the opposite direction. Panel (c) reveals a distinct pattern where Night frames cluster in the negative region of PC3 while Day frames mirror this structure along the positive direction. This indicates that PC3 also encodes lighting effects, and it reflects a systematic representation of illumination that is preserved across other structural differences in the data. In panel (d), comparison with the class-labeled projection (Figure~\ref{fig:2d_label_extra}(c)), further reveals that PC4 captures both variations within Abnormal samples and illumination differences. Taken together, these observations indicate that the model encodes lighting effects independently of other sources of variability or class-specific features. 
-
-Finer time-of-day labels defined by Hour reveal no distinct structures in Figure~\ref{fig:3d_hours}. This suggests that the model does not explicitly encode finer-grained hourly differences. Generally, Morning and Night samples are most distinctly separate, aligning with previous observations. Afternoon and Evening points fall into more intermediate regions of the embedding space, though no consistent pattern is observed. A similar trend is seen when coloring by season labels. Within the 3D embedding space of the first five principal components, no dominant seasonal structure emerges (Figure~\ref{fig:3d_season}). Samples from different seasons typically occupy the same overall shape, with no strong separations or clustering. Overall, these results indicate that the embeddings primarily reflect broader temporal distinctions, such as Morning vs. Night, rather than finer time-of-day or seasonal variations. 
 
 \subsection{Generalization Across Camera Locations}
 The final multi-camera model demonstrates strong and consistent performance across all three camera locations in its training set. Table~\ref{tab:train_test_accs} shows high accuracies on both seasonal and non-seasonal cameras, indicating the model generalizes effectively to unseen environmental variations present in the training distribution. While recall is lower than precision across all subsets, it is still above 80\% in every case, meaning its Abnormal predictions can generally be trusted.
@@ -888,14 +824,6 @@ Specifically, the confusion matrix for Berryessa (Figure~\ref{fig:berryessa_conf
 \end{figure}
 
 This highlights the importance of incorporating broad and comprehensive landscapes during training. With a more representative dataset, the model exhibits the capability to maintain consistent performance across locations with varying weather conditions, even across broader temporal contexts such as seasons and times of day. 
-
-
-\subsection{Throughput Analysis}
-We evaluate the model's throughput by measuring total inference time as a function of batch size (Figure~\ref{fig:throughput}). For reference, ALERTCalifornia's camera network captures one frame every 15 seconds per camera. With a large batch size, a single \ac{GPU} can theoretically process a larger number of cameras simultaneously. For example, if the \ac{GPU} can process 32-image batches, it may be used to simultaneously generate predictions of 32 cameras in real time.
-
-Our analysis focuses purely on the model's processing speed rather than loading time. Since they are independent, each can be measured separately. The results in Figure~\ref{fig:throughput} show a steady increase in throughput speed as batch size increases, with the exception of drops from 35 to 40 and 50 to 60. We hypothesize that these irregularities occur because NVIDIA \ac{GPU}s process data more effectively when the underlying matrices are multiples of 8~\cite{nvidia_dl_perf}. Additionally, noise may have been introduced into these measurements due to display rendering and the use of VSCode as the IDE. Regardless, per-batch inference times were no longer than 0.07 seconds on average across all sizes. 
-
-With our current setup, we estimate that a single \ac{GPU} can generate real-time predictions for at least 64 images simultaneously, given sufficiently fast load times. While the results highlight the model's potential for real-time deployment at a moderate scale, throughput analysis is not the central focus of our work. We mainly present these numbers to provide some context for the potential of real-time deployment at scale. These should not serve as rigorous benchmarks for computational efficiency. 
 
 
 \subsection{Limitations and Future Work}
@@ -1056,4 +984,6 @@ Figure~\ref{fig:pc1pc2} displays the embedding space learned by our Quarter 1 mo
 \end{acronym}
 
 \end{document}
+
+
 
