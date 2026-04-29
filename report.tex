@@ -201,19 +201,20 @@ While training models $\mathbf{z_T}$ and $\mathbf{z_D}$, we binarize our data. A
 \subsubsection{Model Architecture}
 \label{sec:architecture}
 
-We separate each model $\mathbf{z_i} \in \{\mathbf{z_T}, \mathbf{z_D}, \mathbf{z_H}\}$ into two components: the encoder $\mathbf{E_i} \in \{\mathbf{E_T}, \mathbf{E_D}, \mathbf{E_H}\}$ and the classification head $\mathbf{H_i} \in \{\mathbf{H_T}, \mathbf{H_D}, \mathbf{H_H}\}$ (Refer to Table~\ref{tab:symbology} for the full table of symbology). The processed images are first passed through the encoder, which outputs an embedding for each image. These embeddings are then passed into the classification head, which returns a classification for each image. The relationships can be written as follows, where $x$ is a set of processed images:
+We separate each model $\mathbf{z_i} \in \{\mathbf{z_T}, \mathbf{z_D}, \mathbf{z_H}\}$ into two components: the encoder $\mathbf{E_i} \in \{\mathbf{E_T}, \mathbf{E_D}, \mathbf{E_H}\}$ and the classification head $\mathbf{H_i} \in \{\mathbf{H_T}, \mathbf{H_D}, \mathbf{H_H}\}$ (refer to Figure~\ref{fig:model_pipeline} for the full model pipeline and symbology}). The processed images are first passed through the encoder, which outputs an embedding for each image. These embeddings are then passed into the classification head, which returns a classification for each image. The relationships can be written as follows, where $x$ is a set of processed images:
 \[\mathbf{z_i}(x) = \mathbf{H_i}(\mathbf{E_i}(x))\] 
 
-Each encoder $\mathbf{E_i}$ utilizes the \ac{ViT} architecture to map each image into a lower-dimensional feature space. We initialize this component’s weights as the weights of our Quarter 1 encoder, whose training process is outlined in Appendix~\ref{app:q1encoder}. By default, a ViT (as implemented by Dosovitskiy et al.) consists of patch embedding, position embedding, transformer encoder, and \ac{MLP} classification head segments. Figure~\ref{fig:vit_model}, from Dosovitskiy et al., demonstrates this architecture visually. We modify our encoder’s architecture by removing the \ac{MLP} classification head (shown in orange in Figure~\ref{fig:vit_model}), so its outputs come directly from the transformer encoder layer. The specific \ac{ViT} architecture we utilize is ViT-Base, so these outputs are 768-dimensional \cite{dosovitskiy2021an}. Each $\mathbf{E_i}$ shares identical architecture; they differ only in the values of their weights. 
+Each encoder $\mathbf{E_i}$ utilizes a \ac{ViT} architecture to map input images into a lower-dimensional feature space. We initialize the encoder using pretrained weights from our Quarter 1 model (see Appendix~/ref{app:q1encoder}). By default, a ViT (as implemented by Dosovitskiy et al.) consists of patch embedding, position embedding, transformer encoder, and \ac{MLP} classification head segments (Figure~\ref{fig:vit_model}). We modify our encoder’s architecture by removing the \ac{MLP} classification head (shown in the top orange box in Figure~\ref{fig:vit_model}), so its outputs come directly from the transformer encoder layer. The specific \ac{ViT} architecture we utilize is ViT-Base, so these outputs are 768-dimensional \cite{dosovitskiy2021an}. All encoders share an identical architecture; they differ only in the values of their weights. 
 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=0.9\linewidth]{new_figures/vit_model.png}
-    \caption{Model overview of the Vision Transformer, from Dosovitskiy et al \cite{dosovitskiy2021an}. The input images are split into patches, linearly embedded, positionally embedded, and sent into a transformer encoder. The original paper also uses an \ac{MLP} head after this, but we remove this.}
+    \caption{Overview of the Vision Transformer (ViT) architecture \cite{dosovitskiy2021an}. Input images are split into patches, embedded, and processed through a transformer encoder. In our framework, the original MLP classification head is removed, and a separate MLP head is applied to the resulting embeddings for anomaly classification.}
+}
     \label{fig:vit_model}
 \end{figure}
 
-Meanwhile, each classification head $\mathbf{H_i} \in \{\mathbf{H_T}, \mathbf{H_D}, \mathbf{H_H}\}$ consists of 4 layers with a ReLU nonlinearity. We visualize this architecture in Figure~\ref{fig:mlp_head}. The key difference from the original ViT implementation is the addition of a layer norm function and second linear layer. These add more depth to the network, allowing it to capture more complex relationships between features. However, the architectures differ in that $\mathbf{H_T}$ and $\mathbf{H_D}$ return 2-dimensional outputs, while $\mathbf{H_H}$ returns 4 dimensional outputs corresponding to their class labels. 
+To perform classification, we introduce a separate \ac{MLP} head $\mathbf{H_i} \in \{\mathbf{H_T}, \mathbf{H_D}, \mathbf{H_H}\}$, illustrated in orange at the bottom of Figure~\ref{vit_model}. Each head consists of 4 layers with a ReLU nonlinearity. The key difference from the original \ac{ViT} implementation is the addition of a layer norm function and second linear layer. These add more depth to the network, allowing it to capture more complex relationships between features. However, the architectures differ in that $\mathbf{H_T}$ and $\mathbf{H_D}$ return 2-dimensional outputs, while $\mathbf{H_H}$ returns 4 dimensional outputs corresponding to their class labels. 
 
 
 \begin{figure}[h!]
@@ -279,59 +280,6 @@ Finally, we train $\mathbf{H'}$ on $\mathbf{I}$ using the same cross-entropy los
 \begin{table}[h!]
 \centering
 
-\caption{Symbology for model components across the training pipeline.}
-\label{tab:symbology}
-
-\renewcommand{\arraystretch}{1.3}
-
-\begin{tabular}{lccccc}
-\toprule
-\textbf{Model} & \textbf{Objective} & \textbf{Encoder} & \textbf{Embedding set} & \textbf{Head} & \textbf{Output} \\
-\midrule
-
-Triplet
-& Triplet margin
-& $\mathbf{E_T}$
-& $\mathbf{e_T} = \mathbf{E_T}(\mathbf{C_L}) \in \mathbb{R}^{768}$
-& $\mathbf{H_T}$
-& $\mathbf{y_T} \in \mathbb{R}^{2}$ \\
-
-DeepSAD
-& DeepSAD
-& $\mathbf{E_D}$
-& $\mathbf{e_D} = \mathbf{E_D}(\mathbf{C_L}) \in \mathbb{R}^{768}$
-& $\mathbf{H_D}$
-& $\mathbf{y_D} \in \mathbb{R}^{2}$ \\
-
-H-SAD
-& H-SAD
-& $\mathbf{E_H}$
-& $\mathbf{e_H} = \mathbf{E_H}(\mathbf{C_L}) \in \mathbb{R}^{768}$
-& $\mathbf{H_H}$
-& $\mathbf{y_H} \in \mathbb{R}^{4}$ \\
-
-Multi-camera (final)
-& Triplet margin loss
-& $\mathbf{E'}$
-& $\mathbf{e'} = \mathbf{E'}(\mathbf{I}) \in \mathbb{R}^{768}$
-& $\mathbf{H'}$
-& $\mathbf{y'} \in \mathbb{R}^{2}$ \\
-
-\bottomrule
-\end{tabular}
-
-\vspace{6pt}
-
-\begin{minipage}{\textwidth}
-\footnotesize
-\textit{Notes:} All encoders $\mathbf{E_i}$ use the ViT-Base architecture and produce 768-dimensional embeddings.
-Single-camera models are trained on $\mathbf{C_L}$ ($|\mathbf{C_L}| = 1388$),
-while the multi-camera model is trained on $\mathbf{I}$ ($|\mathbf{I}| = 3761$).
-Classification heads output binary labels: Normal/Abnormal ($\mathbb{R}^2$)—except H-SAD, which outputs four classes ($\mathbb{R}^4$).
-\end{minipage}
-
-\end{table}
-
 
 \section{Results}
 \label{sec:results}
@@ -388,9 +336,6 @@ We examine the first three principal components to understand how each baseline 
         \subcaption{H-SAD}
     \end{subfigure}
 
-    \caption{3D projections of baseline model embeddings for the first three principal components, colored by class labels. Baseline models are trained exclusively on the Coronado Hills dataset.}
-    \label{fig:baseline_3ds}
-\end{figure}
 
 \subsection{Final Multi-Camera Model}
 
@@ -469,7 +414,7 @@ Learned embeddings capture image-quality degradation patterns that are robust to
 
 For unseen cameras, classification accuracies reported in Table~\ref{tab:class_acc} indicate an average accuracy of 74.05\%, with the model performing strongest on the two seasonal cameras: Dew Drop and Toro Peak. Accuracy for these cameras ranges from 81.82\% to 82.54\%, while the accuracy for non-seasonal Berryessa is 55.05\%, despite more non-seasonal cameras in the dataset. These results suggest that rather than seasonal variability, the model's ability to generalize is more influenced by environmental characteristics.
 
-Visual inspection of Clear frames (Figure~\ref{fig:clear_frames}) supports this interpretation: Dew Drop and Toro Peak appear more consistent with the training dataset, with arid mountainous terrain, while Berryessa contains a unique body of water. The presence of a water body likely contributes to reduced performance at Berryessa, suggesting that the model generalizes effectively only to locations with landscape and environmental contexts similar to those represented in the training set. Notably, Dew Drop, located in Amador County outside of southern California, still achieved reasonable results, indicating that the model can generalize across geographic regions when the environmental context is familiar. Therefore, the model can generalize across seasonal differences and varying lighting conditions within familiar terrains, but its performance significantly declines when presented with novel contexts.
+Visual inspection of Clear frames (Figure~\ref{fig:level_examples}) supports this interpretation: Dew Drop and Toro Peak appear more consistent with the training dataset, with arid mountainous terrain, while Berryessa contains a unique body of water. The presence of a water body likely contributes to reduced performance at Berryessa, suggesting that the model generalizes effectively only to locations with landscape and environmental contexts similar to those represented in the training set. Notably, Dew Drop, located in Amador County outside of southern California, still achieved reasonable results, indicating that the model can generalize across geographic regions when the environmental context is familiar. Therefore, the model can generalize across seasonal differences and varying lighting conditions within familiar terrains, but its performance significantly declines when presented with novel contexts.
 
 \begin{figure}[h!]
     \centering
@@ -742,7 +687,6 @@ We trained the Quarter 1 encoder on batches of size 64 for 10 epochs, utilizing 
 \end{figure}
 
 Figure~\ref{fig:pc1pc2} displays the embedding space learned by our Quarter 1 model. While there is a general divide in Normal and Abnormal points across the first principal axis, these points are not mapped in a linearly separable manner. Many Normal and Abnormal points lie in a ``gray area'' between the two clusters, Thus, this encoder proved unfit for a finalized output, but its weights could be used for transfer learning, as a somewhat meaningful feature representation was learned. 
-
 
 
 \section{Acronyms}
