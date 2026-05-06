@@ -197,7 +197,7 @@ While training models $\mathbf{z_T}$ and $\mathbf{z_D}$, we binarize our data. A
 We separate each model $\mathbf{z_i} \in \{\mathbf{z_T}, \mathbf{z_D}, \mathbf{z_H}\}$ into two components: the encoder $\mathbf{E_i} \in \{\mathbf{E_T}, \mathbf{E_D}, \mathbf{E_H}\}$ and the classification head $\mathbf{H_i} \in \{\mathbf{H_T}, \mathbf{H_D}, \mathbf{H_H}\}$ (refer to Figure~\ref{fig:model_pipeline} for the full model pipeline and symbology). The processed images are first passed through the encoder, which outputs an embedding for each image. These embeddings are then passed into the classification head, which returns a classification for each image. The relationships can be written as follows, where $x$ is a set of processed images:
 \[\mathbf{z_i}(x) = \mathbf{H_i}(\mathbf{E_i}(x))\] 
 
-Each encoder $\mathbf{E_i}$ utilizes a \ac{ViT} architecture to map input images into a lower-dimensional feature space. We initialize the encoder using pretrained weights from our Quarter 1 model (see Appendix~/ref{app:q1encoder}). By default, a ViT (as implemented by Dosovitskiy et al.) consists of patch embedding, position embedding, transformer encoder, and \ac{MLP} classification head segments (Figure~\ref{fig:vit_model}). We modify our encoder’s architecture by removing the \ac{MLP} classification head (shown in the top orange box in Figure~\ref{fig:vit_model}), so its outputs come directly from the transformer encoder layer. The specific \ac{ViT} architecture we utilize is ViT-Base, so these outputs are 768-dimensional \cite{dosovitskiy2021an}. All encoders share an identical architecture; they differ only in the values of their weights. 
+Each encoder $\mathbf{E_i}$ utilizes a \ac{ViT} architecture to map input images into a lower-dimensional feature space. We initialize the encoder using pretrained weights, obtained from training on the ImageNet-21k dataset and fine-tuning on the ILSVRC2012 dataset \cite{deng2009imagenet, wu2020visual}. By default, a ViT (as implemented by Dosovitskiy et al.) consists of patch embedding, position embedding, transformer encoder, and \ac{MLP} classification head segments (Figure~\ref{fig:vit_model}). We modify our encoder’s architecture by removing the \ac{MLP} classification head (shown in the top orange box in Figure~\ref{fig:vit_model}), so its outputs come directly from the transformer encoder layer. The specific \ac{ViT} architecture we utilize is ViT-Base, so these outputs are 768-dimensional \cite{dosovitskiy2021an}. All encoders share an identical architecture; they differ only in the values of their weights. 
 
 \begin{figure}[h!]
     \centering
@@ -558,25 +558,6 @@ The second term of $\mathcal{L}_{clear}$ utilizes the information from the label
 In the 4-point ordinal case, the classes that comprise of the Abnormal class--namely Major Anomalies and Severe Anomalies--contain several images that look similar to one another. This contradicts the second assumption of the DeepSAD objective: that Abnormal images vary greatly in appearance. To circumvent this, we incorporate a second sub-function $\mathcal{L}_{anom}$, which seeks to bring non-Clear data closer to other data in the same class. This allows the embedding space to achieve minimal intra-class separation, as the other terms seek to maximize the separation between Normal and Abnormal data. The hyperparameter $\alpha$ controls the influence of $\mathcal{L}_{anom}$ relative to $\mathcal{L}_{clear}$. 
 
 The final term is a weight regularization term, whose influence is controlled by the hyperparameter $\lambda$.
-
-\section{Quarter 1 Encoder}
-\label{app:q1encoder}
-
-For the initial weights of our model, we load the weights used for our Quarter 1 encoder. Our Quarter 1 project was our initial exploration into this dataset, and the encoder that we obtained provided a ``starting point'' to build off of in this paper.
-
-We used a data set of 7500 images to train our Quarter 1 encoder. Each of these was labeled as either Normal or Abnormal. This labeling process had no strict labeling scheme; the images were labeled based on the labelers' intuition. 
-
-We trained the Quarter 1 encoder on batches of size 64 for 10 epochs, utilizing the triplet margin loss objective (see Appendix~\ref{app:marginloss}) with an Adam optimization algorithm for simplicity. We chose a batch size of 64 to maximally leverage our computational power. We chose a value of 0.19 for the margin and trained for 10 epochs, as our initial hyperparameter tuning showed that this resulted in the best separation along the first principal axis. Additionally, we utilized hard negative mining to optimize the learning process (see Appendix~\ref{app:mining}). 
-
-\begin{figure}[h!]
-    \centering
-    \includegraphics[width=0.6\linewidth]{figures/pc1vpc2.png}
-    \caption{A diagram showing the separation that resulted from our Quarter 1 model. Two points which lie in the ``gray area'' are also shown.}
-    \label{fig:pc1pc2}
-\end{figure}
-
-Figure~\ref{fig:pc1pc2} displays the embedding space learned by our Quarter 1 model. While there is a general divide in Normal and Abnormal points across the first principal axis, these points are not mapped in a linearly separable manner. Many Normal and Abnormal points lie in a ``gray area'' between the two clusters, Thus, this encoder proved unfit for a finalized output, but its weights could be used for transfer learning, as a somewhat meaningful feature representation was learned. 
-
 
 \section{Acronyms}
 
