@@ -166,7 +166,7 @@ To construct our labeled dataset for supervised learning, we design a camera-agn
 
 \begin{figure}
     \centering
-    \includegraphics[width=1\linewidth]{new_figures/level_image_grid.png}
+    \includegraphics[width=1\linewidth]{figures/level_image_grid.png}
     \caption{Representative examples corresponding to each level of the 4-point ordinal scale across all six cameras. Seasonal cameras are indicated with an asterisk(*).}
     \label{fig:level_examples}
 \end{figure}
@@ -177,7 +177,7 @@ We obtain a total of 6,269 labeled images for our training set (see Table~\ref{t
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.9\linewidth]{new_figures/label_flowchart2.png}
+    \includegraphics[width=0.9\linewidth]{figures/label_flowchart2.png}
     \caption{Flowchart illustrating the decision framework behind our labeling task.}
     \label{fig:flowchart}
 \end{figure}
@@ -208,9 +208,8 @@ Each encoder $\mathbf{E_i}$ utilizes a \ac{ViT} architecture to map input images
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.9\linewidth]{new_figures/vit_model.png}
+    \includegraphics[width=0.9\linewidth]{figures/vit_model.png}
     \caption{Overview of the Vision Transformer (ViT) architecture \cite{dosovitskiy2021an}. Input images are split into patches, embedded, and processed through a transformer encoder. In our framework, the original MLP classification head is removed, and a separate MLP head is applied to the resulting embeddings for anomaly classification.}
-}
     \label{fig:vit_model}
 \end{figure}
 
@@ -219,7 +218,7 @@ To perform classification, we introduce a separate \ac{MLP} head $\mathbf{H_i} \
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.9\linewidth]{new_figures/mlp_class_head.png}
+    \includegraphics[width=0.9\linewidth]{figures/mlp_class_head.png}
     
     \caption{Our \ac{MLP} classification head. It takes in a batch of length n, consisting of 768-dimensional embedding vectors. Then, it performs layer normalization on the inputs, as described in the paper Layer Normalization \cite{ba2016layernormalization}. Then, it passes the values through a linear layer which projects them to 128 dimensions, followed by a ReLU nonlinearity, and finally a second linear layer whose outputs are the logits we use to make predictions.}
     \label{fig:mlp_head}
@@ -272,7 +271,7 @@ Finally, we train $\mathbf{H'}$ on $\mathbf{I}$ using the same cross-entropy los
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.85\linewidth]{new_figures/model_pipeline.png}
+    \includegraphics[width=0.85\linewidth]{figures/model_pipeline.png}
     \caption{Flowchart outlining the full training pipeline of the model, from baseline models to the final multi-camera model.}
     \label{fig:model_pipeline}
 \end{figure}
@@ -317,13 +316,13 @@ We examine the first three principal components to understand how each baseline 
     % Top row: two images
     \begin{subfigure}{0.48\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{new_figures/triplet_3d.png}
+        \includegraphics[width=\linewidth]{figures/triplet_3d.png}
         \subcaption{Triplet Loss}
     \end{subfigure}
     \hfill
     \begin{subfigure}{0.48\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{new_figures/deepsad_3d.png}
+        \includegraphics[width=\linewidth]{figures/deepsad_3d.png}
         \subcaption{DeepSAD}
     \end{subfigure}
 
@@ -332,7 +331,7 @@ We examine the first three principal components to understand how each baseline 
     % Bottom row: one centered image
     \begin{subfigure}{0.5\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{new_figures/hsad_3d.png}
+        \includegraphics[width=\linewidth]{figures/hsad_3d.png}
         \subcaption{H-SAD}
     \end{subfigure}
 
@@ -407,7 +406,7 @@ Learned embeddings capture image-quality degradation patterns that are robust to
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.85\linewidth]{new_figures/final_location_1v2.png}
+    \includegraphics[width=0.85\linewidth]{figures/final_location_1v2.png}
     \caption{PC1 vs. PC2 projection of the final model trained using triplet loss, colored by camera locations.}
     \label{fig:final_locations}
 \end{figure}
@@ -424,19 +423,19 @@ Visual inspection of Clear frames (Figure~\ref{fig:level_examples}) supports thi
         \centering
         \begin{subfigure}{0.31\textwidth}
             \centering
-            \includegraphics[width=\linewidth]{new_figures/level1.jpg}
+            \includegraphics[width=\linewidth]{figures/level1.jpg}
             \subcaption{Coronado Hills}
         \end{subfigure}
         \hfill
         \begin{subfigure}{0.31\textwidth}
             \centering
-            \includegraphics[width=\linewidth]{new_figures/mesagrande_level1.jpg}
+            \includegraphics[width=\linewidth]{figures/mesagrande_level1.jpg}
             \subcaption{Mesa Grande}
         \end{subfigure}
         \hfill
         \begin{subfigure}{0.31\textwidth}
             \centering
-            \includegraphics[width=\linewidth]{new_figures/palomar_level1.jpg}
+            \includegraphics[width=\linewidth]{figures/palomar_level1.jpg}
             \subcaption{Palomar Observatory}
         \end{subfigure}
 
@@ -452,19 +451,19 @@ Visual inspection of Clear frames (Figure~\ref{fig:level_examples}) supports thi
         \centering
         \begin{subfigure}{0.31\textwidth}
             \centering
-            \includegraphics[width=\linewidth]{new_figures/berryessa_level1.jpg}
+            \includegraphics[width=\linewidth]{figures/berryessa_level1.jpg}
             \subcaption{Berryessa}
         \end{subfigure}
         \hfill
         \begin{subfigure}{0.31\textwidth}
             \centering
-            \includegraphics[width=\linewidth]{new_figures/dewdrop_level1.jpg}
+            \includegraphics[width=\linewidth]{figures/dewdrop_level1.jpg}
             \subcaption{Dew Drop}
         \end{subfigure}
         \hfill
         \begin{subfigure}{0.31\textwidth}
             \centering
-            \includegraphics[width=\linewidth]{new_figures/toropeak_level1.jpg}
+            \includegraphics[width=\linewidth]{figures/toropeak_level1.jpg}
             \subcaption{Toro Peak}
         \end{subfigure}
 
@@ -481,7 +480,7 @@ Specifically, the confusion matrix for Berryessa (Figure~\ref{fig:berryessa_conf
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=0.6\linewidth]{new_figures/berryessa_confusion_matrix.png}
+    \includegraphics[width=0.6\linewidth]{figures/berryessa_confusion_matrix.png}
     \caption{Confusion matrix for the Berryessa camera on the test set. The axes show predicted and true Normal/Abnormal labels.}
     \label{fig:berryessa_confusion}
 \end{figure}
@@ -493,19 +492,19 @@ Specifically, the confusion matrix for Berryessa (Figure~\ref{fig:berryessa_conf
         \centering
         \begin{subfigure}{0.31\textwidth}
             \centering
-            \includegraphics[width=\linewidth]{new_figures/berryessa1.jpg}
+            \includegraphics[width=\linewidth]{figures/berryessa1.jpg}
             \subcaption{Coronado Hills}
         \end{subfigure}
         \hfill
         \begin{subfigure}{0.31\textwidth}
             \centering
-            \includegraphics[width=\linewidth]{new_figures/berryessa2.jpg}
+            \includegraphics[width=\linewidth]{figures/berryessa2.jpg}
             \subcaption{Mesa Grande}
         \end{subfigure}
         \hfill
         \begin{subfigure}{0.31\textwidth}
             \centering
-            \includegraphics[width=\linewidth]{new_figures/berryessa3.jpg}
+            \includegraphics[width=\linewidth]{figures/berryessa3.jpg}
             \subcaption{Palomar Observatory}
         \end{subfigure}
 
@@ -521,19 +520,19 @@ Specifically, the confusion matrix for Berryessa (Figure~\ref{fig:berryessa_conf
         \centering
         \begin{subfigure}{0.31\textwidth}
             \centering
-            \includegraphics[width=\linewidth]{new_figures/coronado1.jpg}
+            \includegraphics[width=\linewidth]{figures/coronado1.jpg}
             \subcaption{Coronado Hills}
         \end{subfigure}
         \hfill
         \begin{subfigure}{0.31\textwidth}
             \centering
-            \includegraphics[width=\linewidth]{new_figures/palomar2.jpg}
+            \includegraphics[width=\linewidth]{figures/palomar2.jpg}
             \subcaption{Palomar Observatory}
         \end{subfigure}
         \hfill
         \begin{subfigure}{0.31\textwidth}
             \centering
-            \includegraphics[width=\linewidth]{new_figures/mesa3.jpg}
+            \includegraphics[width=\linewidth]{figures/mesa3.jpg}
             \subcaption{Mesa Grande}
         \end{subfigure}
 
@@ -607,7 +606,7 @@ In our implementation, we train on \textit{all} triplets (those with Normal anch
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.6\linewidth]{new_figures/tml.png}
+    \includegraphics[width=0.6\linewidth]{figures/tml.png}
     \caption{A diagram showing how the embeddings of different types of negative points exist in feature space during computation of triplet margin loss. Easy negatives’ embeddings lie outside the margin $\alpha$; they already satisfy the triplet constraint. In contrast, hard negatives’ embeddings lie inside the margin. There are two sub-types: semi-hard negatives, whose embeddings lie further away from the anchor’s than the positive point’s, and very hard negatives, whose embeddings lie closer to the anchor’s than the positive point’s.}
     \label{fig:tml}
 \end{figure}
@@ -681,7 +680,7 @@ We trained the Quarter 1 encoder on batches of size 64 for 10 epochs, utilizing 
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.6\linewidth]{new_figures/pc1vpc2.png}
+    \includegraphics[width=0.6\linewidth]{figures/pc1vpc2.png}
     \caption{A diagram showing the separation that resulted from our Quarter 1 model. Two points which lie in the ``gray area'' are also shown.}
     \label{fig:pc1pc2}
 \end{figure}
