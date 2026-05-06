@@ -209,14 +209,6 @@ Each encoder $\mathbf{E_i}$ utilizes a \ac{ViT} architecture to map input images
 To perform classification, we introduce a separate \ac{MLP} head $\mathbf{H_i} \in \{\mathbf{H_T}, \mathbf{H_D}, \mathbf{H_H}\}$, illustrated in orange at the bottom of Figure~\ref{vit_model}. Each head consists of 4 layers with a ReLU nonlinearity. The key difference from the original \ac{ViT} implementation is the addition of a layer norm function and second linear layer. These add more depth to the network, allowing it to capture more complex relationships between features. However, the architectures differ in that $\mathbf{H_T}$ and $\mathbf{H_D}$ return 2-dimensional outputs, while $\mathbf{H_H}$ returns 4 dimensional outputs corresponding to their class labels. 
 
 
-\begin{figure}[h!]
-    \centering
-    \includegraphics[width=0.9\linewidth]{figures/mlp_class_head.png}
-    
-    \caption{Our \ac{MLP} classification head. It takes in a batch of length n, consisting of 768-dimensional embedding vectors. Then, it performs layer normalization on the inputs, as described in the paper Layer Normalization \cite{ba2016layernormalization}. Then, it passes the values through a linear layer which projects them to 128 dimensions, followed by a ReLU nonlinearity, and finally a second linear layer whose outputs are the logits we use to make predictions.}
-    \label{fig:mlp_head}
-\end{figure}
-
 \subsubsection{Objective Selection}
 
 We first train each of $\mathbf{E_i} \in \{\mathbf{E_T}, \mathbf{E_D}, \mathbf{E_H}\}$ separately, each with its own objective function. $\mathbf{E_T}$ is trained on the set of images $\mathbf{C_L}$, while $\mathbf{E_D}$ and $\mathbf{E_H}$ are trained on the set of images $\mathbf{C}$. $\mathbf{E_T}$ is trained using triplet margin loss, $\mathbf{E_D}$ is trained using DeepSAD loss, and $\mathbf{E_H}$ is trained using H-SAD loss. The various hyperparameters used for each objective are outlined in Table~\ref{tab:hyperparams}. These hyperparameters yield the best separation between classes in the embedding space. Additionally, we utilize hard negative mining while training $\mathbf{E_T}$ to optimize the learning process (see Appendix~\ref{app:mining}). With this process, we obtain baseline encoders with which to analyze our data.
@@ -327,7 +319,7 @@ The recall, which is lower than the precision across all subsets of the data, in
 
 \subsubsection{Model Generalizability}
 \label{sec:generalizability}
-We test the generalizability of our model on three additional unseen datasets. The results are summarized in Table~\ref{tab:class_acc}. 
+We test the generalizability of our model on three additional unseen datasets. The results are summarized in Table~\ref{tab:camera_accuracies}. 
 
 \begin{table}[h!]
 \centering
@@ -373,67 +365,6 @@ Learned embeddings capture image-quality degradation patterns that are robust to
 For unseen cameras, classification accuracies reported in Table~\ref{tab:camera_accuracies} indicate an average accuracy of 74.05\%, with the model performing strongest on the two seasonal cameras: Dew Drop and Toro Peak. Accuracy for these cameras ranges from 81.82\% to 82.54\%, while the accuracy for non-seasonal Berryessa is 55.05\%, despite more non-seasonal cameras in the dataset. These results suggest that rather than seasonal variability, the model's ability to generalize is more influenced by environmental characteristics.
 
 Visual inspection of Clear frames (Figure~\ref{fig:level_examples}) supports this interpretation: Dew Drop and Toro Peak appear more consistent with the training dataset, with arid mountainous terrain, while Berryessa contains a unique body of water. The presence of a water body likely contributes to reduced performance at Berryessa, suggesting that the model generalizes effectively only to locations with landscape and environmental contexts similar to those represented in the training set. Notably, Dew Drop, located in Amador County outside of southern California, still achieved reasonable results, indicating that the model can generalize across geographic regions when the environmental context is familiar. Therefore, the model can generalize across seasonal differences and varying lighting conditions within familiar terrains, but its performance significantly declines when presented with novel contexts.
-
-\begin{figure}[h!]
-    \centering
-
-    % Row 1
-    \begin{minipage}{\textwidth}
-        \centering
-        \begin{subfigure}{0.31\textwidth}
-            \centering
-            \includegraphics[width=\linewidth]{figures/level1.jpg}
-            \subcaption{Coronado Hills}
-        \end{subfigure}
-        \hfill
-        \begin{subfigure}{0.31\textwidth}
-            \centering
-            \includegraphics[width=\linewidth]{figures/mesagrande_level1.jpg}
-            \subcaption{Mesa Grande}
-        \end{subfigure}
-        \hfill
-        \begin{subfigure}{0.31\textwidth}
-            \centering
-            \includegraphics[width=\linewidth]{figures/palomar_level1.jpg}
-            \subcaption{Palomar Observatory}
-        \end{subfigure}
-
-        % Row 1 caption
-        \vspace{0.2cm}
-        \par\centering
-    \end{minipage}
-
-    \vspace{0.5cm} % spacing between rows
-
-    % Row 2
-    \begin{minipage}{\textwidth}
-        \centering
-        \begin{subfigure}{0.31\textwidth}
-            \centering
-            \includegraphics[width=\linewidth]{figures/berryessa_level1.jpg}
-            \subcaption{Berryessa}
-        \end{subfigure}
-        \hfill
-        \begin{subfigure}{0.31\textwidth}
-            \centering
-            \includegraphics[width=\linewidth]{figures/dewdrop_level1.jpg}
-            \subcaption{Dew Drop}
-        \end{subfigure}
-        \hfill
-        \begin{subfigure}{0.31\textwidth}
-            \centering
-            \includegraphics[width=\linewidth]{figures/toropeak_level1.jpg}
-            \subcaption{Toro Peak}
-        \end{subfigure}
-
-        % Row 2 caption
-        \vspace{0.2cm}
-        \par\centering
-    \end{minipage}
-
-    \caption{Clear frames of each camera in our dataset. The first row shows training set cameras, and the second row shows testing set cameras.}
-    \label{fig:clear_frames}
-\end{figure}
 
 Specifically, the confusion matrix for Berryessa (Figure~\ref{fig:berryessa_confusion}) shows a high number of false positives, where Normal images are misclassified as Abnormal. Figure~\ref{fig:berryessa_comparison} highlights several examples. We hypothesize that this misclassification is primarily due to the presence of a body of water, which visually resembles cloud cover. For comparison, the second row shows Abnormal images from the training set. Because this visual feature was not represented as Normal in the training data, the model has few reference examples, leading to misclassifications when it resembles clouds. 
 
