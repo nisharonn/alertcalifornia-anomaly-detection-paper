@@ -171,16 +171,9 @@ To construct our labeled dataset for supervised learning, we design a camera-agn
     \label{fig:level_examples}
 \end{figure}
 
-The flowchart in Figure~\ref{fig:flowchart} provides additional structure to guide our labeling decisions. Each image is reviewed by a minimum of three annotators to ensure labeling consistency and reduce subjective bias. The final label is determined by majority opinion. Images with conflicting or tied labels are separately addressed in a team meeting to reach a consensus. 
+Each image is reviewed by a minimum of three annotators to ensure labeling consistency and reduce subjective bias. The final label is determined by majority opinion. Images with conflicting or tied labels are separately addressed in a team meeting to reach a consensus. We obtain a total of 6,269 labeled images for our training set (see Table~\ref{tab:frame_counts} for complete counts). Figure~\ref{fig:level_examples} highlights examples of each level across cameras using this labeling scheme. 
 
-We obtain a total of 6,269 labeled images for our training set (see Table~\ref{tab:frame_counts} for complete counts). Figure~\ref{fig:level_examples} highlights examples of each level across cameras using this labeling scheme. 
 
-\begin{figure}[h!]
-    \centering
-    \includegraphics[width=0.9\linewidth]{figures/label_flowchart2.png}
-    \caption{Flowchart illustrating the decision framework behind our labeling task.}
-    \label{fig:flowchart}
-\end{figure}
 
 Once we obtain our labeled dataset, we downsample and standardize the images to a size of 224 x 224 pixels with 3 channels, then convert them into tensors of size 224 x 224 x 3. In their processed form, our images have 150,528 features each.  We then split the larger dataset into training, validation, and test sets with a 60\% training, 20\% validation, and 20\% test split. Finally, the training, validation, and test splits are divided into batches of size 32 to maximize the computational power of a single \ac{GPU} during training. 
 
@@ -304,36 +297,6 @@ Validation accuracy & 0.9333 & 0.9136 & 0.7387 \\
 
 \end{table}
 
-
-We examine the first three principal components to understand how each baseline model encodes Normal and Abnormal points (or 4-point anomaly severity for H-SAD) in the embedding space. Figure~\ref{fig:baseline_3ds} shows 3D projections for (a) triplet loss, (b) DeepSAD, and (c) H-SAD models. 
-
-\begin{figure}[h!]
-    \centering
-
-    % Top row: two images
-    \begin{subfigure}{0.48\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{figures/triplet_3d.png}
-        \subcaption{Triplet Loss}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}{0.48\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{figures/deepsad_3d.png}
-        \subcaption{DeepSAD}
-    \end{subfigure}
-
-    \vspace{0.5cm}
-
-    % Bottom row: one centered image
-    \begin{subfigure}{0.5\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{figures/hsad_3d.png}
-        \subcaption{H-SAD}
-    \end{subfigure}
-
-\end{figure}
-
 \subsection{Final Multi-Camera Model}
 
 We adopt triplet loss in our final model architecture due to its superior performance in baseline evaluations. The final multi-camera model is trained on data from Coronado Hills, Mesa Grande, and Palomar Observatory. We further assess intra-dataset performance by testing the model on unseen samples from these three training locations. Table~\ref{tab:train_test_accs} reports the training and test accuracies, as well as recall and precision.
@@ -393,8 +356,6 @@ Accuracy & 0.5505 & 0.8182 & 0.8254 & 0.7405 \\
 The results demonstrate that embedding-based anomaly detection can effectively identify image quality degradations while preserving interpretable latent representations. Beyond classification performance, the learned embeddings reveal meaningful semantic structure related to image quality and environmental variability. In this section, we discuss the key findings of the baseline model comparison, examine the structure of the learned embeddings, and analyze the model’s ability to generalize across different camera locations. We also highlight the key limitations of our study and directions for future work. 
 
 \subsection{Model Comparison and Selection}
-Figure~\ref{fig:baseline_3ds} visualizes the 3D projections learned by the three baseline models. A curved, double C-shaped structure appears within each embedding space. Despite being trained with different objective functions, the models broadly learn latent representations that capture similar visual patterns. Notably, these C-shaped structures contain samples from all label classes, indicating that dominant patterns in the embedding space are not unique to class labels.
-
 Triplet loss demonstrates the strongest performance with a classification accuracy of 0.9333 compared to DeepSAD’s 0.9136 and H-SAD’s 0.7387 (Table~\ref{tab:train_val_accs}). The large gap between H-SAD and its alternatives likely reflects differences in label structure. Triplet loss and DeepSAD are trained using binary Normal/Abnormal labels, while H-SAD uses a custom 4-point severity scale. Learning more levels requires capturing more complex and nuanced ordinal distinctions in image quality degradation, which can make the classification task inherently more difficult. Based on these results, we adopt triplet loss for our final multi-camera model. 
 
 \subsection{Generalization Across Camera Locations}
@@ -409,7 +370,7 @@ Learned embeddings capture image-quality degradation patterns that are robust to
     \label{fig:final_locations}
 \end{figure}
 
-For unseen cameras, classification accuracies reported in Table~\ref{tab:class_acc} indicate an average accuracy of 74.05\%, with the model performing strongest on the two seasonal cameras: Dew Drop and Toro Peak. Accuracy for these cameras ranges from 81.82\% to 82.54\%, while the accuracy for non-seasonal Berryessa is 55.05\%, despite more non-seasonal cameras in the dataset. These results suggest that rather than seasonal variability, the model's ability to generalize is more influenced by environmental characteristics.
+For unseen cameras, classification accuracies reported in Table~\ref{tab:camera_accuracies} indicate an average accuracy of 74.05\%, with the model performing strongest on the two seasonal cameras: Dew Drop and Toro Peak. Accuracy for these cameras ranges from 81.82\% to 82.54\%, while the accuracy for non-seasonal Berryessa is 55.05\%, despite more non-seasonal cameras in the dataset. These results suggest that rather than seasonal variability, the model's ability to generalize is more influenced by environmental characteristics.
 
 Visual inspection of Clear frames (Figure~\ref{fig:level_examples}) supports this interpretation: Dew Drop and Toro Peak appear more consistent with the training dataset, with arid mountainous terrain, while Berryessa contains a unique body of water. The presence of a water body likely contributes to reduced performance at Berryessa, suggesting that the model generalizes effectively only to locations with landscape and environmental contexts similar to those represented in the training set. Notably, Dew Drop, located in Amador County outside of southern California, still achieved reasonable results, indicating that the model can generalize across geographic regions when the environmental context is familiar. Therefore, the model can generalize across seasonal differences and varying lighting conditions within familiar terrains, but its performance significantly declines when presented with novel contexts.
 
