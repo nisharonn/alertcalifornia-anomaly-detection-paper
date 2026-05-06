@@ -183,7 +183,7 @@ Our training process can be divided into two phases: \textbf{objective selection
 
 During objective selection, we evaluate the effectiveness of different training objectives on a single camera. We train three baseline models using three different loss functions: triplet margin loss (see Appendix~\ref{app:marginloss}), DeepSAD loss (see Appendix~\ref{app:deepsad}), and Hierarchical SAD (H-SAD) loss (see Appendix~\ref{app:hsad}). Triplet margin loss is a supervised objective, while DeepSAD and H-SAD are semi-supervised objectives. 
 
-To ensure robust evaluation, we implement a stratified 5-fold cross-validation framework. The dataset is partitioned into five folds using stratified sampling based on class labels and camera location so that each fold has a representative distribution of anomaly severity and geographic location. During each iteration, four folds are used for training, while the final fold is held out as the validation set. 
+To ensure robust evaluation, we implement a stratified 4-fold cross-validation framework. The dataset is partitioned into four folds using stratified sampling based on class labels and camera location so that each fold has a representative distribution of anomaly severity and geographic location. During each iteration, three folds are used for training, while the final fold is held out as the validation set. 
 
 Within each fold, we train a two-stage pipeline consisting of an encoder and a classification head. The encoder is trained on the training folds only, after which embeddings are computed for both training and validation sets. A classification head is then trained on the training embeddings and evaluated on the corresponding validation embeddings. Model performance is measured using classification accuracy, precision, and recall on both training and validation sets. After completing all cross-validation iterations, we compute the mean and standard deviation of metrics across the validation folds. 
 
@@ -264,8 +264,6 @@ Finally, we train $\mathbf{H'}$ on $\mathbf{I}$ using the same cross-entropy los
 
 \section{Results}
 \label{sec:results}
-
-We explore the resulting embeddings using an interactive visualization tool\footnote{\url{https://dsc180.dronelab-nathan-2.ucsd.edu/}} that supports both 2D and 3D projections. This tool allows us to color points by specific semantic attributes, such as class label, daytime, hour, and season, enabling a more detailed analysis of the embedding structure. 
 
 \subsection{Baseline Models}
 In our objective selection process, we train and evaluate each baseline model on the Coronado Hills dataset. Table~\ref{tab:train_val_accs} summarizes the training and validation accuracies of the baseline models. 
