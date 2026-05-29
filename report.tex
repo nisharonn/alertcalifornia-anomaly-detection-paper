@@ -118,20 +118,20 @@ We source the data from cameras in the ALERTCalifornia network. These cameras ex
 
 \midrule
 
-Level 1 - Clear  & 946  & 1024 & 1149 & 3120 & 133 & 132 & 88  & 353 \\
-Level 2 - Minor  & 575  & 547  & 489  & 1611 & 54  & 44  & 67  & 165 \\
-\textbf{Normal}  & 1521 & 1572 & 1638 & 4731 & 187 & 176 & 155 & 518 \\
+Level 1 - Clear  & X  & X & X & X & X & X & X  & X \\
+Level 2 - Minor  & X  & X  & X  & X & X  & X  & X  & X \\
+\textbf{Normal}  & X & X & X & X & X & X & X & X \\
 
 \midrule
 
-Level 3 - Major  & 417  & 247  & 236  & 900  & 34  & 19  & 32  & 85 \\
-Level 4 - Severe & 376  & 94   & 168  & 639  & 31  & 14  & 11  & 56 \\
-\textbf{Abnormal}& 793  & 341  & 404  & 1538 & 65  & 33  & 43  & 141 \\
+Level 3 - Major  & X  & X  & X  & X  & X  & X  & X  & X \\
+Level 4 - Severe & X  & X   & X  & X  & X  & X  & X  & X \\
+\textbf{Abnormal}& X  & X  & X  & X & X  & X  & X  & X \\
 
 \midrule
 
-\textbf{Labeled}   & 2314 & 1913 & 2042 & 6269 & 252  & 209  & 198  & 659 \\
-\textbf{Unlabeled} & 5174 & 6005 & 4822 & 16001 & 7171 & 7780 & 6951 & 21902 \\
+\textbf{Labeled}   & 2325 & 1915 & 2042 & 6282 & 256  & 212  & 202  & 670\\
+\textbf{Unlabeled} & 5163 & 6003 & 4822 & 15988& 7167 & 7777 & 6947 & 21891 \\
 
 \midrule
 
@@ -266,7 +266,7 @@ Finally, we train $\mathbf{H'}$ on $\mathbf{I}$ using the same cross-entropy los
 \label{sec:results}
 
 \subsection{Baseline Models}
-In our objective selection process, we train and evaluate each baseline model on the Coronado Hills dataset, using 4-fold cross validation. We then take the mean and standard deviation of the training and validation accuracy across these 4 folds. We repeat this process across 5 different randomly selected training seeds, taking the averages of the 5 means and standard deviations we obtain.  Table~\ref{tab:train_val_accs} summarizes the results of this analysis. 
+In our objective selection process, we train and evaluate each baseline model on the Coronado Hills dataset using 4-fold cross-validation. We then take the mean and standard deviation of the training and validation accuracy across these folds. We repeat this process across five different randomly selected training seeds, taking the average of the means and \ac{SDs}.  Table~\ref{tab:train_val_accs} summarizes the results of this analysis. 
 
 \begin{table}[h!]
 \centering
@@ -279,10 +279,10 @@ In our objective selection process, we train and evaluate each baseline model on
 \textbf{Metric} & $\mathbf{z_T}$ & $\mathbf{z_D}$ & $\mathbf{z_H}$ \\
 \midrule
 
-Overall Mean Training Accuracy & 0.9979 & 0.9348 & 0.7227 \\
-Average Training Accuracy STD & 0.0015 & 0.0062 & 0.0316 \\
-Overall Mean Validation Accuracy & 0.9260 & 0.9094 & 0.6903 \\
-Average Validation Accuracy STD & 0.0105 & 0.0177 & 0.0300 \\
+Average mean training accuracy & 0.9979 & 0.9348 & 0.7227 \\
+Average training \ac{SD} & 0.0015 & 0.0062 & 0.0316 \\
+Average mean validation accuracy & 0.9260 & 0.9094 & 0.6903 \\
+Average validation \ac{SD} & 0.0105 & 0.0177 & 0.0300 \\
 
 \bottomrule
 \end{tabular}
@@ -291,7 +291,7 @@ Average Validation Accuracy STD & 0.0105 & 0.0177 & 0.0300 \\
 
 \subsection{Final Multi-Camera Model}
 
-We adopt triplet loss in our final model architecture due to its superior performance in baseline evaluations. The final multi-camera model is trained on data from Coronado Hills, Mesa Grande, and Palomar Observatory. We further assess intra-dataset performance by testing the model on unseen samples from these three training locations. Table~\ref{tab:train_test_accs} reports the training and test accuracies, as well as recall and precision.
+We adopt triplet loss in our final model architecture due to its superior performance in baseline evaluations. The final multi-camera model is trained on data from Coronado Hills, Mesa Grande, and Palomar Observatory. We further assess intra-dataset performance by testing the model on unseen samples from these three locations. Table~\ref{tab:train_test_accs} reports the training and test accuracies, as well as recall and precision.
 
 \begin{table}[h!]
 \centering
@@ -573,9 +573,11 @@ The final term is a weight regularization term, whose influence is controlled by
   \acro{MLP}{multi-layer perceptron}
   \acro{GPU}{graphics processing unit}
   \acro{ORR}{operationally relevant region}
+  \acro{SDs}{standard deviations}
 \end{acronym}
 
 \end{document}
+
 
 
 
