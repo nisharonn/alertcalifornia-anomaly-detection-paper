@@ -59,7 +59,7 @@ sorting=none]{biblatex}
 
 %%%%%% Abstract %%%%%%
 \begin{abstract}
-Large-scale environmental monitoring networks rely on hundreds of geographically distributed cameras that operate under diverse conditions. For these cameras to reliably support hazard response operations, they must not only detect extreme events but also maintain consistent image quality across time and environmental variability. While the field has well-established models for extreme event detection, there has been comparatively little development of systems that identify image quality-related anomalies. In particular, there is a need to detect degradation factors such as debris, glare, fog, blur, and low-contrast imagery, which may arise from both environmental conditions and internal camera issues, and can significantly reduce camera visibility. To address this gap, we present a camera health monitoring framework for the University of California San Diego’s ALERTCalifornia \footnote{\url{https://alertcalifornia.org/}} network. Our approach uses a \ac{ViT}-Base encoder and an \ac{MLP} classification head to detect frame-level anomalies, enabling automatic, continuous assessment of camera performance. Evaluated across geographically distributed cameras, our model achieves an overall accuracy of $93.94\%$ on training cameras and $74.05\%$ on unseen cameras, demonstrating its ability to generalize across geographic regions. These results highlight the potential for machine-learning-based anomaly detection to provide robust camera health assessments, thereby improving the long-term sustainability and reliability of critical environmental monitoring operations. 
+Large-scale environmental monitoring networks rely on hundreds of geographically distributed cameras that operate under diverse conditions. For these cameras to reliably support hazard response operations, they must not only detect extreme events but also maintain consistent image quality across time and environmental variability. While the field has well-established models for extreme event detection, there has been comparatively little development of systems that identify image quality-related anomalies. In particular, there is a need to detect degradation factors such as debris, glare, fog, blur, and low-contrast imagery, which may arise from both environmental conditions and internal camera issues, and can significantly reduce camera visibility. To address this gap, we present a camera health monitoring framework for the University of California San Diego’s ALERTCalifornia \footnote{\url{https://alertcalifornia.org/}} network. Our approach uses a \ac{ViT}-Base encoder and an \ac{MLP} classification head to detect frame-level anomalies, enabling automatic, continuous assessment of camera performance. Evaluated across geographically distributed cameras, our model achieves an overall accuracy of $XXX\%$ on training cameras and $XXX\%$ on unseen cameras, demonstrating its ability to generalize across geographic regions. These results highlight the potential for machine-learning-based anomaly detection to provide robust camera health assessments, thereby improving the long-term sustainability and reliability of critical environmental monitoring operations. 
 
 \end{abstract}
 
@@ -159,9 +159,9 @@ To construct our labeled dataset for supervised learning, we design a camera-agn
 
 \begin{itemize}
     \item\textbf{Level 1 – Clear:} Normal operation of the camera with no observable obstruction or quality issues. The camera is fully reliable for response operations.
-    \item\textbf{Level 2 – Minor Anomaly:} Translucent obstructions (<25\% of the \ac{ORR}) cause partial obstruction of the camera’s field of view. The camera remains reliable for response operations.
-    \item\textbf{Level 3 – Major Anomaly:} Opaque obstructions (<25\% of the \ac{ORR}) cause partial obstruction of the camera’s field of view. The camera may not be reliable for response operations.
-    \item\textbf{Level 4 – Severe Anomaly:} An obstruction covers more than 25\% of the \ac{ORR}. The camera is unreliable for response operations.                   
+    \item\textbf{Level 2 – Minor Anomaly:} Translucent obstructions (<50\% of the \ac{ORR}) cause partial obstruction of the camera’s field of view. The camera remains reliable for response operations.
+    \item\textbf{Level 3 – Major Anomaly:} Opaque obstructions (<50\% of the \ac{ORR}) cause partial obstruction of the camera’s field of view. The camera may not be reliable for response operations.
+    \item\textbf{Level 4 – Severe Anomaly:} An obstruction covers more than 50\% of the \ac{ORR}. The camera is unreliable for response operations.                   
 \end{itemize}
 
 \begin{figure}
@@ -234,12 +234,12 @@ $\mathbf{E_H}$ & -- & $1 \times 10^{-2}$ & $1 \times 10^{1}$ & $1 \times 10^{-6}
 
 After training each encoder, we obtain three sets of embeddings $\{\mathbf{e_T}, \mathbf{e_D}, \mathbf{e_H}\}$. These are obtained by running inference on the labeled Coronado Hills data, as follows:
 \[\mathbf{e_T} = \mathbf{E_T}(\mathbf{C_L}), \quad \mathbf{e_D} = \mathbf{E_D}(\mathbf{C_L}), \quad \mathbf{e_H} = \mathbf{E_H}(\mathbf{C_L})\]
-\[\left|\mathbf{e_T}\right| = \left|\mathbf{e_D}\right| = \left|\mathbf{e_H}\right| = 1388\]
+\[\left|\mathbf{e_T}\right| = \left|\mathbf{e_D}\right| = \left|\mathbf{e_H}\right| =X\]
  
 We run inference only on the labeled data, since the classification head is trained with a supervised objective. We then examine each set of embeddings by using \ac{PCA} to reduce each $\mathbf{e_i} \in \{\mathbf{e_T}, \mathbf{e_D}, \mathbf{e_H}\}$ to ten dimensions. 
 
 Finally, we separate each image embedding set $\mathbf{e_i}$ into batches of size 32 and use each to train its corresponding \ac{MLP} head $\mathbf{H_i} \in \{\mathbf{H_T}, \mathbf{H_D}, \mathbf{H_H}\}$. For simplicity, we train using the cross-entropy loss function, as provided by PyTorch \footnote{\url{https://pytorch.org/}}. Finally, by using each $\mathbf{H_i}$ to perform inference on its corresponding $\mathbf{e_i}$, we obtain sets of outputs $\mathbf{y_i} \in \{\mathbf{y_T}, \mathbf{y_D}, \mathbf{y_H}\}$, where:
-\[\left|\mathbf{y_T}\right| = \left|\mathbf{y_D}\right| = \left|\mathbf{y_H}\right| = 1388\]
+\[\left|\mathbf{y_T}\right| = \left|\mathbf{y_D}\right| = \left|\mathbf{y_H}\right| =X\]
 \[\mathbf{y_T} \in \mathbb{R}^2, \quad \mathbf{y_D} \in \mathbb{R}^2, \quad\mathbf{y_H} \in \mathbb{R}^4\]
 
 Each $\mathbf{y_i}$ can be used to compute a classification for each image in $\mathbf{C_L}$. $\mathbf{y_T}$ and $\mathbf{y_D}$ yield classifications of Normal or Abnormal, while $\mathbf{y_H}$ yields a classification of Clear, Minor Anomaly, Major Anomaly, or Severe Anomaly. Using these outputs (along with the embeddings), we analyze each model to determine which objective function to move forward with for multi-camera training. The results of this analysis can be found in Section~\ref{sec:results}.
@@ -248,11 +248,11 @@ Each $\mathbf{y_i}$ can be used to compute a classification for each image in $\
 
 Our analysis determined the optimal objective function to be the triplet margin loss. Thus, for our finalized model, we construct a model $\mathbf{z'}$, consisting of components $\mathbf{E'}$ and $\mathbf{H'}$.
 
-We first train $\mathbf{E'}$ on the full set of labeled training data across all three cameras, denoted as $\mathbf{I}$. The corresponding labels are binarized in the same manner discussed in Section~\ref{sec:datacollection}. For the hyperparameters, we choose a margin of 0.19 and train for 10 epochs, as these parameters yield the best separation between Normal and Abnormal points in the embedding space. Once this is complete, we obtain a set of embeddings $\mathbf{e'} = \mathbf{E'}(\mathbf{I})$, where $\left|\mathbf{e'}\right| = 3761$. 
+We first train $\mathbf{E'}$ on the full set of labeled training data across all three cameras, denoted as $\mathbf{I}$. The corresponding labels are binarized in the same manner discussed in Section~\ref{sec:datacollection}. For the hyperparameters, we choose a margin of 0.19 and train for 10 epochs, as these parameters yield the best separation between Normal and Abnormal points in the embedding space. Once this is complete, we obtain a set of embeddings $\mathbf{e'} = \mathbf{E'}(\mathbf{I})$, where $\left|\mathbf{e'}\right| =X$. 
 
 Finally, we train $\mathbf{H'}$ on $\mathbf{I}$ using the same cross-entropy loss function used during objective selection. The outputs returned by $\mathbf{H'}$ are two-dimensional and classify points as Normal or Abnormal. The full model pipeline is illustrated in Figure~\ref{fig:model_pipeline}.
 
-\begin{figure}
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.85\linewidth]{figures/model_pipeline.png}
     \caption{Flowchart outlining the full training pipeline of the model, from baseline models to the final multi-camera model.}
@@ -575,9 +575,3 @@ The final term is a weight regularization term, whose influence is controlled by
 \end{acronym}
 
 \end{document}
-
-
-
-
-
-
