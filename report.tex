@@ -266,7 +266,7 @@ Finally, we train $\mathbf{H'}$ on $\mathbf{I}$ using the same cross-entropy los
 \label{sec:results}
 
 \subsection{Baseline Models}
-In our objective selection process, we train and evaluate each baseline model on the Coronado Hills dataset. Table~\ref{tab:train_val_accs} summarizes the training and validation accuracies of the baseline models. 
+In our objective selection process, we train and evaluate each baseline model on the Coronado Hills dataset, using 4-fold cross validation. We then take the mean and standard deviation of the training and validation accuracy across these 4 folds. We repeat this process across 5 different randomly selected training seeds, taking the averages of the 5 means and standard deviations we obtain.  Table~\ref{tab:train_val_accs} summarizes the results of this analysis. 
 
 \begin{table}[h!]
 \centering
@@ -279,8 +279,10 @@ In our objective selection process, we train and evaluate each baseline model on
 \textbf{Metric} & $\mathbf{z_T}$ & $\mathbf{z_D}$ & $\mathbf{z_H}$ \\
 \midrule
 
-Training accuracy   & 0.9762 & 0.9244 & 0.7594 \\
-Validation accuracy & 0.9333 & 0.9136 & 0.7387 \\
+Overall Mean Training Accuracy & 0.9979 & 0.9348 & 0.7227 \\
+Average Training Accuracy STD & 0.0015 & 0.0062 & 0.0316 \\
+Overall Mean Validation Accuracy & 0.9260 & 0.9094 & 0.6903 \\
+Average Validation Accuracy STD & 0.0105 & 0.0177 & 0.0300 \\
 
 \bottomrule
 \end{tabular}
@@ -346,7 +348,7 @@ Accuracy & 0.5505 & 0.8182 & 0.8254 & 0.7405 \\
 The results demonstrate that embedding-based anomaly detection can effectively identify image quality degradations while preserving interpretable latent representations. Beyond classification performance, the learned embeddings reveal meaningful semantic structure related to image quality and environmental variability. In this section, we discuss the key findings of the baseline model comparison, examine the structure of the learned embeddings, and analyze the model’s ability to generalize across different camera locations. We also highlight the key limitations of our study and directions for future work. 
 
 \subsection{Model Comparison and Selection}
-Triplet loss demonstrates the strongest performance with a classification accuracy of 0.9333 compared to DeepSAD’s 0.9136 and H-SAD’s 0.7387 (Table~\ref{tab:train_val_accs}). The large gap between H-SAD and its alternatives likely reflects differences in label structure. Triplet loss and DeepSAD are trained using binary Normal/Abnormal labels, while H-SAD uses a custom 4-point severity scale. Learning more levels requires capturing more complex and nuanced ordinal distinctions in image quality degradation, which can make the classification task inherently more difficult. Based on these results, we adopt triplet loss for our final multi-camera model. 
+Triplet loss demonstrates the strongest performance with an average validation accuracy of 0.9260 compared to DeepSAD’s 0.9094 and H-SAD’s 0.6903. Triplet loss is also more consistent, as the validation accuracy varies much less across cross validation folds and random seeds. The average standard deviation of validation accuracies is 0.0105 for triplet loss, while it is 0.0177 for DeepSAD and 0.0300 for H-SAD (Table~\ref{tab:train_val_accs}). The large gap between H-SAD and its alternatives likely reflects differences in label structure. Triplet loss and DeepSAD are trained using binary Normal/Abnormal labels, while H-SAD uses a custom 4-point severity scale. Learning more levels requires capturing more complex and nuanced ordinal distinctions in image quality degradation, which can make the classification task inherently more difficult. Based on these results, we adopt triplet loss for our final multi-camera model. 
 
 \subsection{Generalization Across Camera Locations}
 The final multi-camera model demonstrates strong and consistent performance across all three camera locations in its training set. Table~\ref{tab:train_test_accs} shows high accuracies on both seasonal and non-seasonal cameras, indicating the model generalizes effectively to unseen environmental variations present in the training distribution. While recall is lower than precision across all subsets, it is still above 80\% in every case, meaning its Abnormal predictions can generally be trusted.
