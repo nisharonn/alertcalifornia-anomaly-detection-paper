@@ -185,7 +185,7 @@ During objective selection, we evaluate the effectiveness of different training 
 
 To ensure robust evaluation, we implement a stratified 4-fold cross-validation framework. The dataset is partitioned into four folds using stratified sampling based on class labels and camera location so that each fold has a representative distribution of anomaly severity and geographic location. During each iteration, three folds are used for training, while the final fold is held out as the validation set. 
 
-Within each fold, we train a two-stage pipeline consisting of an encoder and a classification head. The encoder is trained on the training folds only, after which embeddings are computed for both training and validation sets. A classification head is then trained on the training embeddings and evaluated on the corresponding validation embeddings. Model performance is measured using classification accuracy, precision, and recall on both training and validation sets. After completing all cross-validation iterations, we compute the mean and standard deviation of metrics across the validation folds. 
+Within each fold, we train a two-stage pipeline consisting of an encoder and a classification head. The encoder is trained on the training folds only, after which embeddings are computed for both training and validation sets. A classification head is then trained on the training embeddings and evaluated on the corresponding validation embeddings. Model performance is measured using classification accuracy, precision, and recall on both training and validation sets. After completing all cross-validation iterations, we compute the mean and \ac{SD} of metrics across the validation folds. 
 
 We refer to the models trained using triplet loss, DeepSAD loss, and H-SAD loss as $\mathbf{z_T}$,  $\mathbf{z_D}$, and $\mathbf{z_H}$ respectively. Each model takes a set of processed images as input and outputs a classification for each one, though the dimensionality of these outputs varies across models. The architectures of the models are discussed further in Section~\ref{sec:architecture}. These models are trained solely on images from the Coronado Hills camera. The full labeled dataset is denoted as $\mathbf{C}$, with the labeled and unlabeled subsets represented as $\mathbf{C_L}$ and $\mathbf{C_U}$, respectively.
 
@@ -266,7 +266,7 @@ Finally, we train $\mathbf{H'}$ on $\mathbf{I}$ using the same cross-entropy los
 \label{sec:results}
 
 \subsection{Baseline Models}
-In our objective selection process, we train and evaluate each baseline model on the Coronado Hills dataset using 4-fold cross-validation. We then take the mean and standard deviation of the training and validation accuracy across these folds. We repeat this process across five different randomly selected training seeds, taking the average of the means and \ac{SDs}.  Table~\ref{tab:train_val_accs} summarizes the results of this analysis. 
+In our objective selection process, we train and evaluate each baseline model on the Coronado Hills dataset using 4-fold cross-validation. We then take the mean and standard deviation of the training and validation accuracy across these folds. We repeat this process across five different randomly selected training seeds, taking the average of the means and standard deviations.  Table~\ref{tab:train_val_accs} summarizes the results of this analysis. 
 
 \begin{table}[h!]
 \centering
@@ -280,9 +280,9 @@ In our objective selection process, we train and evaluate each baseline model on
 \midrule
 
 Average mean training accuracy & 0.9979 & 0.9348 & 0.7227 \\
-Average training \ac{SD} & 0.0015 & 0.0062 & 0.0316 \\
+Average training SD & 0.0015 & 0.0062 & 0.0316 \\
 Average mean validation accuracy & 0.9260 & 0.9094 & 0.6903 \\
-Average validation \ac{SD} & 0.0105 & 0.0177 & 0.0300 \\
+Average validation SD & 0.0105 & 0.0177 & 0.0300 \\
 
 \bottomrule
 \end{tabular}
@@ -304,18 +304,16 @@ We adopt triplet loss in our final model architecture due to its superior perfor
 \textbf{Metric} & Coronado Hills & Mesa Grande & Palomar Observatory & Overall \\
 \midrule
 
-Training accuracy & 0.9944 & 0.9946 & 1.0000 & 0.9962 \\
-Test accuracy     & 0.9044 & 0.9752 & 0.9408 & 0.9394 \\
-Test recall      & 0.8095 & 0.8919 & 0.8370 & 0.8371 \\
-Test precision   & 0.9015 & 0.9706 & 0.8851 & 0.9129 \\
+Training accuracy & X & X & X & X \\
+Test accuracy     & X & X & X & X \\
+Test recall      & X & X & X & X \\
+Test precision   & X & X & X & X \\
 
 \bottomrule
 \end{tabular}
 
 \end{table}
 
-
-The recall, which is lower than the precision across all subsets of the data, indicates the percentage of Abnormal images that the model correctly identifies. Meanwhile, the precision indicates the percentage of Abnormal predictions that were correct. 
 
 \subsubsection{Model Generalizability}
 \label{sec:generalizability}
@@ -324,7 +322,7 @@ We test the generalizability of our model on three additional unseen datasets. T
 \begin{table}[h!]
 \centering
 
-\caption{Classification accuracies on unseen camera locations.}
+\caption{Classification results on unseen camera locations.}
 \label{tab:camera_accuracies}
 
 \begin{tabular}{lcccc}
@@ -332,7 +330,9 @@ We test the generalizability of our model on three additional unseen datasets. T
 \textbf{Location} & Berryessa & Dew Drop$^{*}$ & Toro Peak$^{*}$ & Overall \\
 \midrule
 
-Accuracy & 0.5505 & 0.8182 & 0.8254 & 0.7405 \\
+Accuracy & X & X & X & X \\
+Precision & X & X & X & X \\
+Recall & X & X & X & X \\
 
 \bottomrule
 \end{tabular}
@@ -345,97 +345,99 @@ Accuracy & 0.5505 & 0.8182 & 0.8254 & 0.7405 \\
 
 \section{Discussion}
 
-The results demonstrate that embedding-based anomaly detection can effectively identify image quality degradations while preserving interpretable latent representations. Beyond classification performance, the learned embeddings reveal meaningful semantic structure related to image quality and environmental variability. In this section, we discuss the key findings of the baseline model comparison, examine the structure of the learned embeddings, and analyze the model’s ability to generalize across different camera locations. We also highlight the key limitations of our study and directions for future work. 
+The results demonstrate that embedding-based anomaly detection can effectively identify image quality degradations. In this section, we discuss the key takeaways from the final model performance and analyze the model’s ability to generalize across different camera locations. We also highlight the key limitations of our study and directions for future work. 
 
 \subsection{Model Comparison and Selection}
-Triplet loss demonstrates the strongest performance with an average validation accuracy of 0.9260 compared to DeepSAD’s 0.9094 and H-SAD’s 0.6903. Triplet loss is also more consistent, as the validation accuracy varies much less across cross validation folds and random seeds. The average standard deviation of validation accuracies is 0.0105 for triplet loss, while it is 0.0177 for DeepSAD and 0.0300 for H-SAD (Table~\ref{tab:train_val_accs}). The large gap between H-SAD and its alternatives likely reflects differences in label structure. Triplet loss and DeepSAD are trained using binary Normal/Abnormal labels, while H-SAD uses a custom 4-point severity scale. Learning more levels requires capturing more complex and nuanced ordinal distinctions in image quality degradation, which can make the classification task inherently more difficult. Based on these results, we adopt triplet loss for our final multi-camera model. 
+Triplet loss demonstrates the strongest performance with an average validation accuracy of 0.9260 compared to DeepSAD’s 0.9094 and H-SAD’s 0.6903. Triplet loss is also more consistent, as accuracy varies much less across cross-validation folds and random seeds. The average standard deviation of validation accuracies is 0.0105 for triplet loss, compared to 0.0177 for DeepSAD and 0.0300 for H-SAD (Table~\ref{tab:train_val_accs}). The large gap between H-SAD and its alternatives likely reflects differences in label structure. Triplet loss and DeepSAD are trained using binary Normal/Abnormal labels, while H-SAD uses a custom 4-point severity scale. Learning more levels requires capturing more complex and nuanced ordinal distinctions in image quality degradation, which can make the classification task inherently more difficult. Based on these results, we adopt triplet loss for our final multi-camera model. 
 
 \subsection{Generalization Across Camera Locations}
-The final multi-camera model demonstrates strong and consistent performance across all three camera locations in its training set. Table~\ref{tab:train_test_accs} shows high accuracies on both seasonal and non-seasonal cameras, indicating the model generalizes effectively to unseen environmental variations present in the training distribution. While recall is lower than precision across all subsets, it is still above 80\% in every case, meaning its Abnormal predictions can generally be trusted.
+The final multi-camera model demonstrates ____ performance across all three camera locations in its training set. Table~\ref{tab:train_test_accs} shows ___ accuracies on ___, indicating the model (does/does not) generalizes to unseen environmental variations present in the training distribution. 
 
-Learned embeddings capture image-quality degradation patterns that are robust to temporal variation and landscape differences between the evaluated locations. Figure~\ref{fig:final_locations} illustrates the PC1 and PC2 embeddings of the final model, colored by the three camera datasets used for training. Samples from all three cameras occupy the same general regions of the embedding space, with no distinct camera-specific outliers. A downward parabolic shape emerges, with points clustering tightly at the ends and minimal points occupying the intermediate spaces. This continuous geometry suggests that the model has learned semantic embeddings, though not specifically camera identity. This is desirable for generalization, as it suggests that the learned representations capture systemic visual encodings rather than merely memorizing camera-specific environmental characteristics.
+% Learned embeddings capture image-quality degradation patterns that are robust to temporal variation and landscape differences between the evaluated locations. Figure~\ref{fig:final_locations} illustrates the PC1 and PC2 embeddings of the final model, colored by the three camera datasets used for training. Samples from all three cameras occupy the same general regions of the embedding space, with no distinct camera-specific outliers. A downward parabolic shape emerges, with points clustering tightly at the ends and minimal points occupying the intermediate spaces. This continuous geometry suggests that the model has learned semantic embeddings, though not specifically camera identity. This is desirable for generalization, as it suggests that the learned representations capture systemic visual encodings rather than merely memorizing camera-specific environmental characteristics.
 
-\begin{figure}[h!]
-    \centering
-    \includegraphics[width=0.85\linewidth]{figures/final_location_1v2.png}
-    \caption{PC1 vs. PC2 projection of the final model trained using triplet loss, colored by camera locations.}
-    \label{fig:final_locations}
-\end{figure}
+% \begin{figure}[h!]
+%     \centering
+%     \includegraphics[width=0.85\linewidth]{figures/final_location_1v2.png}
+%     \caption{PC1 vs. PC2 projection of the final model trained using triplet loss, colored by camera locations.}
+%     \label{fig:final_locations}
+% \end{figure}
 
-For unseen cameras, classification accuracies reported in Table~\ref{tab:camera_accuracies} indicate an average accuracy of 74.05\%, with the model performing strongest on the two seasonal cameras: Dew Drop and Toro Peak. Accuracy for these cameras ranges from 81.82\% to 82.54\%, while the accuracy for non-seasonal Berryessa is 55.05\%, despite more non-seasonal cameras in the dataset. These results suggest that rather than seasonal variability, the model's ability to generalize is more influenced by environmental characteristics.
+For unseen cameras, classification accuracies reported in Table~\ref{tab:camera_accuracies} indicate an average accuracy of X\%, 
 
-Visual inspection of Clear frames (Figure~\ref{fig:level_examples}) supports this interpretation: Dew Drop and Toro Peak appear more consistent with the training dataset, with arid mountainous terrain, while Berryessa contains a unique body of water. The presence of a water body likely contributes to reduced performance at Berryessa, suggesting that the model generalizes effectively only to locations with landscape and environmental contexts similar to those represented in the training set. Notably, Dew Drop, located in Amador County outside of southern California, still achieved reasonable results, indicating that the model can generalize across geographic regions when the environmental context is familiar. Therefore, the model can generalize across seasonal differences and varying lighting conditions within familiar terrains, but its performance significantly declines when presented with novel contexts.
+% with the model performing strongest on the two seasonal cameras: Dew Drop and Toro Peak. Accuracy for these cameras ranges from 81.82\% to 82.54\%, while the accuracy for non-seasonal Berryessa is 55.05\%, despite more non-seasonal cameras in the dataset. These results suggest that rather than seasonal variability, the model's ability to generalize is more influenced by environmental characteristics.
 
-Specifically, the confusion matrix for Berryessa (Figure~\ref{fig:berryessa_confusion}) shows a high number of false positives, where Normal images are misclassified as Abnormal. Figure~\ref{fig:berryessa_comparison} highlights several examples. We hypothesize that this misclassification is primarily due to the presence of a body of water, which visually resembles cloud cover. For comparison, the second row shows Abnormal images from the training set. Because this visual feature was not represented as Normal in the training data, the model has few reference examples, leading to misclassifications when it resembles clouds. 
+% Visual inspection of Clear frames (Figure~\ref{fig:level_examples}) supports this interpretation: Dew Drop and Toro Peak appear more consistent with the training dataset, with arid mountainous terrain, while Berryessa contains a unique body of water. The presence of a water body likely contributes to reduced performance at Berryessa, suggesting that the model generalizes effectively only to locations with landscape and environmental contexts similar to those represented in the training set. Notably, Dew Drop, located in Amador County outside of southern California, still achieved reasonable results, indicating that the model can generalize across geographic regions when the environmental context is familiar. Therefore, the model can generalize across seasonal differences and varying lighting conditions within familiar terrains, but its performance significantly declines when presented with novel contexts.
 
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=0.6\linewidth]{figures/berryessa_confusion_matrix.png}
-    \caption{Confusion matrix for the Berryessa camera on the test set. The axes show predicted and true Normal/Abnormal labels.}
-    \label{fig:berryessa_confusion}
-\end{figure}
+% Specifically, the confusion matrix for Berryessa (Figure~\ref{fig:berryessa_confusion}) shows a high number of false positives, where Normal images are misclassified as Abnormal. Figure~\ref{fig:berryessa_comparison} highlights several examples. We hypothesize that this misclassification is primarily due to the presence of a body of water, which visually resembles cloud cover. For comparison, the second row shows Abnormal images from the training set. Because this visual feature was not represented as Normal in the training data, the model has few reference examples, leading to misclassifications when it resembles clouds. 
 
-\begin{figure}[h!]
-    \centering
-    % Row 1
-    \begin{minipage}{\textwidth}
-        \centering
-        \begin{subfigure}{0.31\textwidth}
-            \centering
-            \includegraphics[width=\linewidth]{figures/berryessa1.jpg}
-            \subcaption{Coronado Hills}
-        \end{subfigure}
-        \hfill
-        \begin{subfigure}{0.31\textwidth}
-            \centering
-            \includegraphics[width=\linewidth]{figures/berryessa2.jpg}
-            \subcaption{Mesa Grande}
-        \end{subfigure}
-        \hfill
-        \begin{subfigure}{0.31\textwidth}
-            \centering
-            \includegraphics[width=\linewidth]{figures/berryessa3.jpg}
-            \subcaption{Palomar Observatory}
-        \end{subfigure}
+% \begin{figure}[t]
+%     \centering
+%     \includegraphics[width=0.6\linewidth]{figures/berryessa_confusion_matrix.png}
+%     \caption{Confusion matrix for the Berryessa camera on the test set. The axes show predicted and true Normal/Abnormal labels.}
+%     \label{fig:berryessa_confusion}
+% \end{figure}
 
-        % Row 1 caption
-        \vspace{0.2cm}
-        \par\centering
-    \end{minipage}
+% \begin{figure}[h!]
+%     \centering
+%     % Row 1
+%     \begin{minipage}{\textwidth}
+%         \centering
+%         \begin{subfigure}{0.31\textwidth}
+%             \centering
+%             \includegraphics[width=\linewidth]{figures/berryessa1.jpg}
+%             \subcaption{Coronado Hills}
+%         \end{subfigure}
+%         \hfill
+%         \begin{subfigure}{0.31\textwidth}
+%             \centering
+%             \includegraphics[width=\linewidth]{figures/berryessa2.jpg}
+%             \subcaption{Mesa Grande}
+%         \end{subfigure}
+%         \hfill
+%         \begin{subfigure}{0.31\textwidth}
+%             \centering
+%             \includegraphics[width=\linewidth]{figures/berryessa3.jpg}
+%             \subcaption{Palomar Observatory}
+%         \end{subfigure}
 
-    \vspace{0.5cm} % spacing between rows
+%         % Row 1 caption
+%         \vspace{0.2cm}
+%         \par\centering
+%     \end{minipage}
 
-    % Row 2
-    \begin{minipage}{\textwidth}
-        \centering
-        \begin{subfigure}{0.31\textwidth}
-            \centering
-            \includegraphics[width=\linewidth]{figures/coronado1.jpg}
-            \subcaption{Coronado Hills}
-        \end{subfigure}
-        \hfill
-        \begin{subfigure}{0.31\textwidth}
-            \centering
-            \includegraphics[width=\linewidth]{figures/palomar2.jpg}
-            \subcaption{Palomar Observatory}
-        \end{subfigure}
-        \hfill
-        \begin{subfigure}{0.31\textwidth}
-            \centering
-            \includegraphics[width=\linewidth]{figures/mesa3.jpg}
-            \subcaption{Mesa Grande}
-        \end{subfigure}
+%     \vspace{0.5cm} % spacing between rows
 
-        % Row 2 caption
-        \vspace{0.2cm}
-        \par\centering
-    \end{minipage}
+%     % Row 2
+%     \begin{minipage}{\textwidth}
+%         \centering
+%         \begin{subfigure}{0.31\textwidth}
+%             \centering
+%             \includegraphics[width=\linewidth]{figures/coronado1.jpg}
+%             \subcaption{Coronado Hills}
+%         \end{subfigure}
+%         \hfill
+%         \begin{subfigure}{0.31\textwidth}
+%             \centering
+%             \includegraphics[width=\linewidth]{figures/palomar2.jpg}
+%             \subcaption{Palomar Observatory}
+%         \end{subfigure}
+%         \hfill
+%         \begin{subfigure}{0.31\textwidth}
+%             \centering
+%             \includegraphics[width=\linewidth]{figures/mesa3.jpg}
+%             \subcaption{Mesa Grande}
+%         \end{subfigure}
 
-    \caption{False positive classifications at Berryessa (images a-c) compared to Abnormal image examples from cameras in the training set (images d-f).}
-    \label{fig:berryessa_comparison}
-\end{figure}
+%         % Row 2 caption
+%         \vspace{0.2cm}
+%         \par\centering
+%     \end{minipage}
 
-This highlights the importance of incorporating broad and comprehensive landscapes during training. With a more representative dataset, the model exhibits the capability to maintain consistent performance across locations with varying weather conditions, even across broader temporal contexts such as seasons and times of day. 
+%     \caption{False positive classifications at Berryessa (images a-c) compared to Abnormal image examples from cameras in the training set (images d-f).}
+%     \label{fig:berryessa_comparison}
+% \end{figure}
+
+% This highlights the importance of incorporating broad and comprehensive landscapes during training. With a more representative dataset, the model exhibits the capability to maintain consistent performance across locations with varying weather conditions, even across broader temporal contexts such as seasons and times of day. 
 
 
 \subsection{Limitations and Future Work}
@@ -446,9 +448,7 @@ Future work should expand the dataset to include a larger, more representative s
 
 \section{Conclusion}
 
-We present a \ac{ViT}–based framework for detecting \ac{QoS} anomalies in ALERTCalifornia wildfire monitoring cameras. By pairing a \ac{ViT}-Base encoder with a lightweight classifier and a custom labeling scheme, we demonstrate the effectiveness of a supervised embedding-based approach for image quality monitoring. The final multi-camera model generalizes well to unseen cameras when environmental conditions resemble those in the training set, achieving an average accuracy of 74.05\%. 
 
-Our findings suggest that a supervised \ac{ViT}-Base framework provides a promising foundation for automated image quality assessment, but additional work is needed to support scalability across a network as large as ALERTCalifornia’s. In particular, the current generalization and scalability evaluations are limited, and further testing is required to assess model performance across a broader range of environmental conditions and geographic landscapes. In a practical deployment setting, we envision integrating the fully trained model into ALERTCalifornia’s processing pipeline to continuously evaluate incoming camera frames and assign anomaly labels. Flagged alerts could then be sent to system operators for further inspection or maintenance, or used to adjust thresholds in downstream hazard detection systems. Ultimately, by supporting automated detection of degraded camera feeds, this approach has the potential to improve the reliability and efficiency of large-scale environmental monitoring operations. 
 
 \printbibliography
 
@@ -573,7 +573,7 @@ The final term is a weight regularization term, whose influence is controlled by
   \acro{MLP}{multi-layer perceptron}
   \acro{GPU}{graphics processing unit}
   \acro{ORR}{operationally relevant region}
-  \acro{SDs}{standard deviations}
+  \acro{SD}{standard deviation}
 \end{acronym}
 
 \end{document}
