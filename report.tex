@@ -171,11 +171,9 @@ To construct our labeled dataset for supervised learning, we design a camera-agn
     \label{fig:level_examples}
 \end{figure}
 
-Each image is reviewed by a minimum of three annotators to ensure labeling consistency and reduce subjective bias. The final label is determined by majority opinion. Images with conflicting or tied labels are separately addressed in a team meeting to reach a consensus. We obtain a total of 6,269 labeled images for our training set (see Table~\ref{tab:frame_counts} for complete counts). Figure~\ref{fig:level_examples} highlights examples of each level across cameras using this labeling scheme. 
+Four annotators review each image to ensure labeling consistency and reduce subjective bias. The final label is determined by majority opinion, in which at least 3 annotators agree. Images with conflicting or tied labels are separately addressed in a team meeting to reach a consensus. We obtain a total of 6,282 labeled images for our training set (see Table~\ref{tab:frame_counts} for complete counts). Figure~\ref{fig:level_examples} highlights examples of each level across cameras using this labeling scheme. 
 
-
-
-Once we obtain our labeled dataset, we downsample and standardize the images to a size of 224 x 224 pixels with 3 channels, then convert them into tensors of size 224 x 224 x 3. In their processed form, our images have 150,528 features each.  We then split the larger dataset into training, validation, and test sets with a 60\% training, 20\% validation, and 20\% test split. Finally, the training, validation, and test splits are divided into batches of size 32 to maximize the computational power of a single \ac{GPU} during training. 
+Once we obtain our labeled dataset, we downsample and standardize the images to a size of 224 x 224 pixels with 3 channels, then convert them into tensors of size 224 x 224 x 3. In their processed form, our images have 150,528 features each.  We then split the larger dataset into training and test sets with an 80\% training and 20\% test split. Finally, the training, validation, and test splits are divided into batches of size 32 to maximize the computational power of a single \ac{GPU} during training. 
 
 \subsection{Model Training}
 
@@ -187,7 +185,7 @@ To ensure robust evaluation, we implement a stratified 4-fold cross-validation f
 
 Within each fold, we train a two-stage pipeline consisting of an encoder and a classification head. The encoder is trained on the training folds only, after which embeddings are computed for both training and validation sets. A classification head is then trained on the training embeddings and evaluated on the corresponding validation embeddings. Model performance is measured using classification accuracy, precision, and recall on both training and validation sets. After completing all cross-validation iterations, we compute the mean and \ac{SD} of metrics across the validation folds. 
 
-We refer to the models trained using triplet loss, DeepSAD loss, and H-SAD loss as $\mathbf{z_T}$,  $\mathbf{z_D}$, and $\mathbf{z_H}$ respectively. Each model takes a set of processed images as input and outputs a classification for each one, though the dimensionality of these outputs varies across models. The architectures of the models are discussed further in Section~\ref{sec:architecture}. These models are trained solely on images from the Coronado Hills camera. The full labeled dataset is denoted as $\mathbf{C}$, with the labeled and unlabeled subsets represented as $\mathbf{C_L}$ and $\mathbf{C_U}$, respectively.
+We refer to the models trained using triplet loss, DeepSAD loss, and H-SAD loss as $\mathbf{z_T}$,  $\mathbf{z_D}$, and $\mathbf{z_H}$, respectively. Each model takes a set of processed images as input and outputs a classification for each one, though the dimensionality of these outputs varies across models. The architectures of the models are discussed further in Section~\ref{sec:architecture}. These models are trained solely on images from the Coronado Hills camera. The full labeled dataset is denoted as $\mathbf{C}$, with the labeled and unlabeled subsets represented as $\mathbf{C_L}$ and $\mathbf{C_U}$, respectively.
 
 While training models $\mathbf{z_T}$ and $\mathbf{z_D}$, we binarize our data. Although a frame classified as a Minor Anomaly still constitutes a slight degradation in its quality, this degradation is not severe enough to warrant immediate attention, unlike Major or Severe Anomalies (see Figure~\ref{fig:level_examples}). To reflect this, we aggregate Clear and Minor Anomaly images under the definition of Normal and aggregate Major Anomaly and Severe Anomaly images under the definition of Abnormal. Meanwhile, $\mathbf{z_H}$ is trained using the original 4-level classification. We develop the H-SAD objective to explicitly accept 4 parameters in order to evaluate the effectiveness of a more precise labeling scheme. 
 
@@ -351,7 +349,7 @@ The results demonstrate that embedding-based anomaly detection can effectively i
 Triplet loss demonstrates the strongest performance with an average validation accuracy of 0.9260 compared to DeepSAD’s 0.9094 and H-SAD’s 0.6903. Triplet loss is also more consistent, as accuracy varies much less across cross-validation folds and random seeds. The average standard deviation of validation accuracies is 0.0105 for triplet loss, compared to 0.0177 for DeepSAD and 0.0300 for H-SAD (Table~\ref{tab:train_val_accs}). The large gap between H-SAD and its alternatives likely reflects differences in label structure. Triplet loss and DeepSAD are trained using binary Normal/Abnormal labels, while H-SAD uses a custom 4-point severity scale. Learning more levels requires capturing more complex and nuanced ordinal distinctions in image quality degradation, which can make the classification task inherently more difficult. Based on these results, we adopt triplet loss for our final multi-camera model. 
 
 \subsection{Generalization Across Camera Locations}
-The final multi-camera model demonstrates ____ performance across all three camera locations in its training set. Table~\ref{tab:train_test_accs} shows ___ accuracies on ___, indicating the model (does/does not) generalizes to unseen environmental variations present in the training distribution. 
+The final multi-camera model demonstrates XXX performance across all three camera locations in its training set. Table~\ref{tab:train_test_accs} shows XXX accuracies on XXX, indicating the model (does/does not) generalizes to unseen environmental variations present in the training distribution. 
 
 % Learned embeddings capture image-quality degradation patterns that are robust to temporal variation and landscape differences between the evaluated locations. Figure~\ref{fig:final_locations} illustrates the PC1 and PC2 embeddings of the final model, colored by the three camera datasets used for training. Samples from all three cameras occupy the same general regions of the embedding space, with no distinct camera-specific outliers. A downward parabolic shape emerges, with points clustering tightly at the ends and minimal points occupying the intermediate spaces. This continuous geometry suggests that the model has learned semantic embeddings, though not specifically camera identity. This is desirable for generalization, as it suggests that the learned representations capture systemic visual encodings rather than merely memorizing camera-specific environmental characteristics.
 
@@ -577,6 +575,8 @@ The final term is a weight regularization term, whose influence is controlled by
 \end{acronym}
 
 \end{document}
+
+
 
 
 
