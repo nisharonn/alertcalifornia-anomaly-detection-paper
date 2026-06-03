@@ -399,10 +399,6 @@ In contrast, Mesa Grande and Palomar Observatory exhibit higher precision than r
 \subsection{Generalization Across Camera Locations}
 The embedding projection onto a shared latent space defined by \ac{PC}1 and \ac{PC}2 reveals that all camera locations occupy overlapping regions, though with varying degrees of dispersion (Figure~\ref{fig:final_pc_proj}). While some location-dependent spread is observed, there are no distinct clusters corresponding to individual cameras. This is desirable for generalization, as the absence of camera-specific outliers suggests that learned representations capture systemic visual encodings instead of memorizing location-specific characteristics. 
 
-Accuracy & 0.6040 & 0.8443 & 0.8594 & 0.7776 \\
-Precision & 0.3471 & 0.4833 & 0.5410 & 0.4309 \\
-Recall & 0.9767 & 1.000 & 0.8049 & 0.9217 \\
-
 For unseen cameras, classification accuracies reported in Table~\ref{tab:camera_accuracies} indicate an average accuracy of 77.76\%.
 
 % with the model performing strongest on the two seasonal cameras: Dew Drop and Toro Peak. Accuracy for these cameras ranges from 81.82\% to 82.54\%, while the accuracy for non-seasonal Berryessa is 55.05\%, despite more non-seasonal cameras in the dataset. These results suggest that rather than seasonal variability, the model's ability to generalize is more influenced by environmental characteristics.
