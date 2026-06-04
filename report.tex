@@ -12,6 +12,7 @@
 \usepackage{threeparttable}
 \usepackage{amssymb}
 \usepackage{acronym} 
+\usepackage{float}
 \linenumbers
 
 %%%%%% Bibliography %%%%%%
@@ -59,7 +60,7 @@ sorting=none]{biblatex}
 
 %%%%%% Abstract %%%%%%
 \begin{abstract}
-Large-scale environmental monitoring networks rely on hundreds of geographically distributed cameras that operate under diverse conditions. For these cameras to reliably support hazard response operations, they must not only detect extreme events but also maintain consistent image quality across time and environmental variability. While the field has well-established models for extreme event detection, there has been comparatively little development of systems that identify image quality-related anomalies. In particular, there is a need to detect degradation factors such as debris, glare, fog, blur, and low-contrast imagery, which may arise from both environmental conditions and internal camera issues, and can significantly reduce camera visibility. To address this gap, we present a camera health monitoring framework for the University of California San Diego’s ALERTCalifornia \footnote{\url{https://alertcalifornia.org/}} network. Our approach uses a \ac{ViT}-Base encoder and an \ac{MLP} classification head to detect frame-level anomalies, enabling automatic, continuous assessment of camera performance. Evaluated across geographically distributed cameras, our model achieves an overall accuracy of $XXX\%$ on training cameras and $XXX\%$ on unseen cameras, demonstrating its ability to generalize across geographic regions. These results highlight the potential for machine-learning-based anomaly detection to provide robust camera health assessments, thereby improving the long-term sustainability and reliability of critical environmental monitoring operations. 
+Large-scale environmental monitoring networks rely on hundreds of geographically distributed cameras that operate under diverse conditions. For these cameras to reliably support hazard response operations, they must not only detect extreme events but also maintain consistent image quality across time and environmental variability. While the field has well-established models for extreme event detection, there has been comparatively little development of systems that identify image quality-related anomalies. In particular, there is a need to detect degradation factors such as debris, glare, fog, blur, and low-contrast imagery, which may arise from both environmental conditions and internal camera issues, and can significantly reduce camera visibility. To address this gap, we present a camera health monitoring framework for the University of California San Diego’s ALERTCalifornia \footnote{\url{https://alertcalifornia.org/}} network. Our approach uses a \ac{ViT}-Base encoder and an \ac{MLP} classification head to detect frame-level anomalies, enabling automatic, continuous assessment of camera performance. Evaluated across geographically distributed cameras, our model achieves an overall accuracy of $92.44\%$ on training cameras and $77.76\%$ on unseen cameras, demonstrating its ability to generalize across geographic regions. These results highlight the potential for machine-learning-based anomaly detection to provide robust camera health assessments, thereby improving the long-term sustainability and reliability of critical environmental monitoring operations. 
 
 \end{abstract}
 
@@ -83,14 +84,14 @@ More recently, \ac{ViT}s have emerged as a powerful framework for image-based an
 
 State-of-the-art methods also do not fully align with or exploit the specific characteristics of outdoor \ac{QoS} anomaly detection systems. In particular, many existing works adopt a semi-supervised or unsupervised approach due to the typically imbalanced ratio of normal to anomalous occurrences. However, in environmental monitoring systems, \ac{QoS} anomalies such as persistent debris, recurring solar glare, or nightly fog coverage all occur with greater regularity. These create more balanced datasets that are better suited for manual annotations. It also introduces an opportunity to adopt a fully supervised framework that explicitly learns representations of image quality. 
 
-Capitalizing on this structure, we leverage a fully supervised \ac{ViT} architecture that learns latent embeddings optimized for \ac{QoS} anomaly prediction. Our framework explicitly separates representation learning from classification using two components: a \ac{ViT}-Base encoder that maps input images to latent-space embeddings, and a lightweight multilayer classification head that directly predicts the presence of anomalies on those embeddings. To enforce separability in the embedding space, we adopt the triplet margin loss function, which enables discrimination across diverse environmental conditions by optimizing relative distances between samples. This loss function has demonstrated success in similar representation learning tasks such as face recognition \cite{Schroff_2015_CVPR}. We evaluate the proposed framework on unseen camera locations, achieving an overall accuracy of 74.05\%, demonstrating its ability to generalize across different environments conditions. These results establish a strong baseline for \ac{QoS} anomaly detection in large-scale environmental monitoring systems. 
+Capitalizing on this structure, we leverage a fully supervised \ac{ViT} architecture that learns latent embeddings optimized for \ac{QoS} anomaly prediction. Our framework explicitly separates representation learning from classification using two components: a \ac{ViT}-Base encoder that maps input images to latent-space embeddings, and a lightweight multilayer classification head that directly predicts the presence of anomalies on those embeddings. To enforce separability in the embedding space, we adopt the triplet margin loss function, which enables discrimination across diverse environmental conditions by optimizing relative distances between samples. This loss function has demonstrated success in similar representation learning tasks such as face recognition \cite{Schroff_2015_CVPR}. We evaluate the proposed framework on unseen camera locations, achieving an overall accuracy of 74.05\%, demonstrating its ability to generalize across different environmental conditions. These results establish a strong baseline for \ac{QoS} anomaly detection in large-scale environmental monitoring systems. 
 
 \section{Materials and Methods}
 
 \subsection{Experimental and Technical Design}
 \label{sec:exp_tech_design}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.85\linewidth]{figures/model_pipeline.png}
     \caption{Flowchart outlining the full training pipeline of the model, from baseline models to the final multi-camera model.}
@@ -336,7 +337,7 @@ To assess the model’s potential to generalize, we examine learned embeddings i
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.75\linewidth]{figures/final_p1p2.png}
+    \includegraphics[width=0.85\linewidth]{figures/final_p1p2.png}
     \caption{PC1 vs. PC2 projection of the final model trained using triplet loss, colored by
 camera locations.}
     \label{fig:final_pc_proj}
@@ -364,7 +365,7 @@ Recall & 0.9767 & 1.000 & 0.8049 & 0.9217 \\
 
 \vspace{4pt}
 \footnotesize
-$^{*}$ Seasonal camera locations.
+$^{*}$Seasonal camera locations.
 
 \end{table}
 
@@ -381,7 +382,7 @@ The final multi-camera model trained with triplet loss demonstrates relatively s
 In contrast, Mesa Grande and Palomar Observatory exhibit higher precision than recall, indicating that anomaly prediction at these locations is more accurate, though some anomalous events remain undetected. This trend is especially pronounced at Palomar Observatory, where precision is highest among the three sites. Overall, precision exceeds recall, suggesting that the model adopts a more conservative strategy at these locations, favoring fewer false alarms at the expense of missing some \ac{QoS} anomalies. 
 
 \subsection{Generalization Across Camera Locations}
-The embedding projection onto a shared latent space defined by \ac{PC}1 and \ac{PC}2 reveals that all camera locations occupy overlapping regions, though with varying degrees of dispersion (Figure~\ref{fig:final_pc_proj}). While some location-dependent spread is observed, there are no distinct clusters corresponding to individual cameras. This is desirable for generalization, as the absence of camera-specific outliers suggests that learned representations capture systemic visual encodings instead of memorizing location-specific characteristics. 
+The embedding projection onto a shared latent space defined by PC1 and PC2 reveals that all camera locations occupy overlapping regions, though with varying degrees of dispersion (Figure~\ref{fig:final_pc_proj}). While some location-dependent spread is observed, there are no distinct clusters corresponding to individual cameras. This is desirable for generalization, as the absence of camera-specific outliers suggests that learned representations capture systemic visual encodings instead of memorizing location-specific characteristics. 
 
 For unseen cameras, classification accuracies reported in Table~\ref{tab:camera_accuracies} indicate an average accuracy of 77.76\%. However, accuracy alone does not fully capture model behavior, and in this setting, it hides a significant tradeoff between precision and recall. In particular, the model achieves a high overall recall of 0.9217 but a considerably lower precision of 0.4309, suggesting a tendency to over-predict \ac{QoS} anomalies at these new locations. This leads to more false positives despite stronger coverage of true anomalous events. 
 
