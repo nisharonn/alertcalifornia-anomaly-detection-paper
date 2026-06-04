@@ -91,6 +91,10 @@ Capitalizing on this structure, we leverage a fully supervised \ac{ViT} architec
 \subsection{Experimental and Technical Design}
 \label{sec:exp_tech_design}
 
+We investigate the effectiveness of different representation learning objectives for detecting \Ac{QoS} anomalies under varying environmental and geographic conditions. The primary objective is to evaluate whether supervised, semi-supervised, and hierarchical anomaly detection objectives produce separable embedding spaces and generalizable models across cameras with distinct environmental characteristics.
+
+Our overall experimental design consists of four main components: (1) data collection and preprocessing, (2) label definition and annotation, (3) model training under multiple objective functions, and (4) evaluation and selection of a final multi-camera model. A high-level overview of the full pipeline is shown in Figure~\ref{fig:model_pipeline}.
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.85\linewidth]{figures/model_pipeline.png}
@@ -98,12 +102,10 @@ Capitalizing on this structure, we leverage a fully supervised \ac{ViT} architec
     \label{fig:model_pipeline}
 \end{figure}
 
-We investigate the effectiveness of different representation learning objectives for detecting \Ac{QoS} anomalies under varying environmental and geographic conditions. The primary objective is to evaluate whether supervised, semi-supervised, and hierarchical anomaly detection objectives produce separable embedding spaces and generalizable models across cameras with distinct environmental characteristics.
-
-Our overall experimental design consists of four main components: (1) data collection and preprocessing, (2) label definition and annotation, (3) model training under multiple objective functions, and (4) evaluation and selection of a final multi-camera model. A high-level overview of the full pipeline is shown in Figure~\ref{fig:model_pipeline}.
-
 \subsection{Data Collection and Preprocessing}
 \label{sec:datacollection}
+
+We source the data from cameras in the ALERTCalifornia network. These cameras exhibit variations in weather conditions, lighting, and terrain (as seen in Figure~\ref{fig:level_examples}), making them suitable for training and testing the \Ac{QoS} anomaly detection model. To construct the labeled dataset, we extract still images from cameras over a one-year period: October 1, 2024, to September 30, 2025. We sample frames at a fixed hourly interval by selecting the image closest to the top of each hour. Because camera views may occasionally be adjusted by local emergency operators, we use pan, tilt, and zoom information from the external metadata to maintain visual consistency across the dataset. Specifically, we exclude frames whose values deviate from the camera-specific median by more than 4° in pan, 0.1° in tilt, or 0.1× in zoom. These thresholds are chosen to minimize scene variation across cameras during model training. Table~\ref{tab:frame_counts} describes the size of each dataset after filtering. 
 
 \begin{figure}
     \centering
@@ -112,9 +114,7 @@ Our overall experimental design consists of four main components: (1) data colle
     \label{fig:level_examples}
 \end{figure}
 
-We source the data from cameras in the ALERTCalifornia network. These cameras exhibit variations in weather conditions, lighting, and terrain (as seen in Figure~\ref{fig:level_examples}), making them suitable for training and testing the \Ac{QoS} anomaly detection model. To construct the labeled dataset, we extract still images from cameras over a one-year period: October 1, 2024, to September 30, 2025. We sample frames at a fixed hourly interval by selecting the image closest to the top of each hour. Because camera views may occasionally be adjusted by local emergency operators, we use pan, tilt, and zoom information from the external metadata to maintain visual consistency across the dataset. Specifically, we exclude frames whose values deviate from the camera-specific median by more than 4° in pan, 0.1° in tilt, or 0.1× in zoom. These thresholds are chosen to minimize scene variation across cameras during model training. Table~\ref{tab:frame_counts} describes the size of each dataset after filtering. 
-
-\begin{table}[t]
+\begin{table}[h]
 \scriptsize
 \centering
 \begin{threeparttable}
@@ -335,7 +335,7 @@ Training accuracy is near-perfect across all three locations, whereas test accur
 \subsection{Generalizability Across Camera Locations}
 To assess the model’s potential to generalize, we examine learned embeddings in the PC1 and PC2 space. Figure~\ref{fig:final_pc_proj} displays the projection, where each point corresponds to a single image in the dataset and is colored according to its associated camera location. The embeddings are computed from the final trained encoder and projected into two dimensions using \ac{PCA}. This visualization directly compares spatial representations across camera sites. 
 
-\begin{figure}
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.85\linewidth]{figures/final_p1p2.png}
     \caption{PC1 vs. PC2 projection of the final model trained using triplet loss, colored by
@@ -345,7 +345,7 @@ camera locations.}
 
 We additionally test generalizability by evaluating on three new unseen datasets: Berryessa, Dew Drop, and Toro Peak. Table~\ref{tab:camera_accuracies} lists the accuracy, precision, and recall values. 
 
-\begin{table}[h!]
+\begin{table}[h]
 \centering
 
 \caption{Classification results on unseen camera locations.}
@@ -374,7 +374,7 @@ $^{*}$Seasonal camera locations.
 The results demonstrate that embedding-based anomaly detection can effectively identify image quality degradations. In this section, we discuss the key takeaways from the final model performance and analyze the model’s ability to generalize across different camera locations. We also highlight the key limitations of our study and directions for future work. 
 
 \subsection{Baseline Models}
-Across the cross-validation folds, triplet loss achieves the highest validation accuracy ($92.60 ± 1.05\%$), followed by DeepSAD ($90.94 ± 1.77\%$) and H-SAD ($69.03 ± 3.00\%$). It also demonstrates the most consistent results, with the lowest standard deviations across all training and validation tests. Interestingly, both triplet loss and DeepSAD achieve accuracies in the $90\%$ range while H-SAD is the only objective function failing to meet that threshold. The large gap between H-SAD and its alternatives likely reflects differences in label structure, in which the former is trained using a 4-point severity scale while the latter are trained using binary Normal/Abnormal labels. As such, learning more levels requires capturing more nuanced ordinal distinctions in image quality degradation, which can make the classification task inherently more difficult. 
+Across the cross-validation folds, triplet loss achieves the highest validation accuracy ($92.60 \pm 1.05\%$), followed by DeepSAD ($90.94 \pm 1.77\%$) and H-SAD ($69.03 \pm 3.00\%$). It also demonstrates the most consistent results, with the lowest standard deviations across all training and validation tests. Interestingly, both triplet loss and DeepSAD achieve accuracies in the $90\%$ range while H-SAD is the only objective function failing to meet that threshold. The large gap between H-SAD and its alternatives likely reflects differences in label structure, in which the former is trained using a 4-point severity scale while the latter are trained using binary Normal/Abnormal labels. As such, learning more levels requires capturing more nuanced ordinal distinctions in image quality degradation, which can make the classification task inherently more difficult. 
 
 \subsection{Final Multi-Camera Model}
 The final multi-camera model trained with triplet loss demonstrates relatively strong performance across all three camera locations in its training set. Table~\ref{tab:train_test_accs} shows test accuracies above $90\%$ for both seasonal and non-seasonal cameras, indicating that the model generalizes effectively to unseen environmental variations present in the training distribution. Among these locations, Coronado Hills achieves the highest overall performance and is the only site where recall exceeds precision. This suggests that the model is particularly effective at identifying a larger proportion of \ac{QoS} anomalies at this location. The tradeoff, however, is more false positives. 
@@ -384,7 +384,7 @@ In contrast, Mesa Grande and Palomar Observatory exhibit higher precision than r
 \subsection{Generalization Across Camera Locations}
 The embedding projection onto a shared latent space defined by PC1 and PC2 reveals that all camera locations occupy overlapping regions, though with varying degrees of dispersion (Figure~\ref{fig:final_pc_proj}). While some location-dependent spread is observed, there are no distinct clusters corresponding to individual cameras. This is desirable for generalization, as the absence of camera-specific outliers suggests that learned representations capture systemic visual encodings instead of memorizing location-specific characteristics. 
 
-For unseen cameras, classification accuracies reported in Table~\ref{tab:camera_accuracies} indicate an average accuracy of 77.76\%. However, accuracy alone does not fully capture model behavior, and in this setting, it hides a significant tradeoff between precision and recall. In particular, the model achieves a high overall recall of 0.9217 but a considerably lower precision of 0.4309, suggesting a tendency to over-predict \ac{QoS} anomalies at these new locations. This leads to more false positives despite stronger coverage of true anomalous events. 
+For unseen cameras, classification accuracies reported in Table~\ref{tab:camera_accuracies} indicate an average accuracy of 77.76\%. However, accuracy alone does not fully capture model behavior, and in this setting, it hides a significant tradeoff between precision and recall. In particular, the model achieves a high overall recall of 92.17\% but a considerably lower precision of 43.09\%, suggesting a tendency to over-predict \ac{QoS} anomalies at these new locations. This leads to more false positives despite stronger coverage of true anomalous events. 
 
 Interestingly, Dew Drop and Toro Peak, both identified as seasonal cameras, outperform Berryessa, a location that does not observe significant environmental variability throughout seasons. With accuracies in the mid-80\% range compared to Berryessa’s 60.40\%, these results indicate that rather than seasonal factors, the model’s ability to generalize is more heavily influenced by other environmental characteristics. 
 
