@@ -121,7 +121,7 @@ We source the data from cameras in the ALERTCalifornia network. These cameras ex
 \caption{Counts of data from each camera location across training and testing sets.}
 \label{tab:frame_counts}
 
-\begin{center}
+\makebox[\textwidth][c]{
 \begin{tabular}{@{}lrrrr@{}}
 \toprule
 \multicolumn{5}{c}{\textbf{Training Data}} \\
@@ -134,27 +134,23 @@ Level 2 - Minor  & 813  & 217  & 363  & 1393 \\
 \textbf{Normal}  & 1790 & 1584 & 1634 & 5008 \\
 
 \midrule
-
 Level 3 - Major  & 226  & 91  & 254  & 571 \\
 Level 4 - Severe & 309  & 240 & 153  & 702 \\
 \textbf{Abnormal}& 535  & 331  & 407  & 1273 \\
 
 \midrule
-
 \textbf{Labeled}   & 2325 & 1915 & 2041 & 6281 \\
 \textbf{Unlabeled} & 5163 & 6003 & 4822 & 15988 \\
 
 \midrule
-
 \textbf{Total} & 7488 & 7918 & 6863 & 22269 \\
-
 \bottomrule
 \end{tabular}
-\end{center}
+}
 
 \vspace{0.5em}
 
-\begin{center}
+\makebox[\textwidth][c]{
 \begin{tabular}{@{}lrrrr@{}}
 \toprule
 \multicolumn{5}{c}{\textbf{Testing Data}} \\
@@ -167,31 +163,27 @@ Level 2 - Minor  & 60  & 38  & 49  & 147 \\
 \textbf{Normal}  & 215 & 181 & 159 & 555 \\
 
 \midrule
-
 Level 3 - Major  & 26 & 24 & 9 & 59 \\
 Level 4 - Severe & 15 & 7 & 34 & 56 \\
 \textbf{Abnormal}& 41 & 31 & 43 & 115 \\
 
 \midrule
-
 \textbf{Labeled}   & 256 & 212 & 202 & 670 \\
 \textbf{Unlabeled} & 7167 & 7777 & 6947 & 21891 \\
 
 \midrule
-
 \textbf{Total} & 7423 & 7989 & 7149 & 22561 \\
-
 \bottomrule
 \end{tabular}
+}
 
 \begin{tablenotes}
 \footnotesize
-\item[*] Seasonal camera locations.
+\item[*]Seasonal camera locations.
 \end{tablenotes}
 
 \end{threeparttable}
 \end{table}
-\end{center}
 
 
 To train our initial model, we focus on three cameras located in San Diego County: Axis-CoronadoHillS \footnote{\url{https://cameras.alertcalifornia.org/?pos=38.6603_-122.1906_10&id=Axis-CoronadoHillsS}}, Axis-PalomarObs1 \footnote{\url{https://cameras.alertcalifornia.org/?pos=33.3600_-116.8600_10&id=Axis-PalomarObs1}}, and Axis-MesaGrandeNorth \footnote{\url{https://cameras.alertcalifornia.org/?pos=33.1900_-116.7600_10&id=Axis-MesaGrandeNorth}}. Throughout the rest of this paper, we will refer to these three locations as Coronado Hills, Palomar Observatory, and Mesa Grande, respectively. These cameras capture different landscapes and varying degrees of seasonal change, making them suitable for our objective. Coronado Hills and Mesa Grande are cameras that do not capture significant seasonal changes in the environment. Palomar Observatory captures notable seasonal changes, such as snow, ice, and changes in foliage color. This variety provides extra flexibility to control for seasonal effects in our model. 
@@ -378,7 +370,7 @@ Recall & 0.9767 & 1.000 & 0.8049 & 0.9217 \\
 
 \vspace{4pt}
 \footnotesize
-\textit{Note:} $^{*}$ Seasonal camera locations.
+\textit${*}$Seasonal camera locations.
 
 \end{table}
 
@@ -387,7 +379,7 @@ Recall & 0.9767 & 1.000 & 0.8049 & 0.9217 \\
 The results demonstrate that embedding-based anomaly detection can effectively identify image quality degradations. In this section, we discuss the key takeaways from the final model performance and analyze the model’s ability to generalize across different camera locations. We also highlight the key limitations of our study and directions for future work. 
 
 \subsection{Baseline Models}
-Across the cross-validation folds, triplet loss, achieves the highest validation accuracy ($92.60 ± 1.05\%$), followed by DeepSAD ($90.94 ± 1.77\%$) and H-SAD ($69.03 ± 3.00\%$). It also demonstrates the most consistent results, with the lowest standard deviations across all training and validation tests. Interestingly, both triplet loss and DeepSAD achieve accuracies in the $90\%$ range while H-SAD is the only objective function failing to meet that threshold. The large gap between H-SAD and its alternatives likely reflects differences in label structure, in which the former is trained using a 4-point severity scale while the latter are trained using binary Normal/Abnormal labels. As such, learning more levels requires capturing more nuanced ordinal distinctions in image quality degradation, which can make the classification task inherently more difficult. 
+Across the cross-validation folds, triplet loss achieves the highest validation accuracy ($92.60 ± 1.05\%$), followed by DeepSAD ($90.94 ± 1.77\%$) and H-SAD ($69.03 ± 3.00\%$). It also demonstrates the most consistent results, with the lowest standard deviations across all training and validation tests. Interestingly, both triplet loss and DeepSAD achieve accuracies in the $90\%$ range while H-SAD is the only objective function failing to meet that threshold. The large gap between H-SAD and its alternatives likely reflects differences in label structure, in which the former is trained using a 4-point severity scale while the latter are trained using binary Normal/Abnormal labels. As such, learning more levels requires capturing more nuanced ordinal distinctions in image quality degradation, which can make the classification task inherently more difficult. 
 
 \subsection{Final Multi-Camera Model}
 The final multi-camera model trained with triplet loss demonstrates relatively strong performance across all three camera locations in its training set. Table~\ref{tab:train_test_accs} shows test accuracies above $90\%$ for both seasonal and non-seasonal cameras, indicating that the model generalizes effectively to unseen environmental variations present in the training distribution. Among these locations, Coronado Hills achieves the highest overall performance and is the only site where recall exceeds precision. This suggests that the model is particularly effective at identifying a larger proportion of \ac{QoS} anomalies at this location. The tradeoff, however, is more false positives. 
@@ -613,5 +605,3 @@ The final term is a weight regularization term, whose influence is controlled by
 \end{acronym}
 
 \end{document}
-
-
