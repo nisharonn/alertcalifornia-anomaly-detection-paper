@@ -121,9 +121,7 @@ We source the data from cameras in the ALERTCalifornia network. These cameras ex
 \caption{Counts of data from each camera location across training and testing sets.}
 \label{tab:frame_counts}
 
-% ===========================
-% Training Data
-% ===========================
+\begin{center}
 \begin{tabular}{@{}lrrrr@{}}
 \toprule
 \multicolumn{5}{c}{\textbf{Training Data}} \\
@@ -152,12 +150,11 @@ Level 4 - Severe & 309  & 240 & 153  & 702 \\
 
 \bottomrule
 \end{tabular}
+\end{center}
 
 \vspace{0.5em}
 
-% ===========================
-% Testing Data
-% ===========================
+\begin{center}
 \begin{tabular}{@{}lrrrr@{}}
 \toprule
 \multicolumn{5}{c}{\textbf{Testing Data}} \\
@@ -194,11 +191,12 @@ Level 4 - Severe & 15 & 7 & 34 & 56 \\
 
 \end{threeparttable}
 \end{table}
+\end{center}
 
 
 To train our initial model, we focus on three cameras located in San Diego County: Axis-CoronadoHillS \footnote{\url{https://cameras.alertcalifornia.org/?pos=38.6603_-122.1906_10&id=Axis-CoronadoHillsS}}, Axis-PalomarObs1 \footnote{\url{https://cameras.alertcalifornia.org/?pos=33.3600_-116.8600_10&id=Axis-PalomarObs1}}, and Axis-MesaGrandeNorth \footnote{\url{https://cameras.alertcalifornia.org/?pos=33.1900_-116.7600_10&id=Axis-MesaGrandeNorth}}. Throughout the rest of this paper, we will refer to these three locations as Coronado Hills, Palomar Observatory, and Mesa Grande, respectively. These cameras capture different landscapes and varying degrees of seasonal change, making them suitable for our objective. Coronado Hills and Mesa Grande are cameras that do not capture significant seasonal changes in the environment. Palomar Observatory captures notable seasonal changes, such as snow, ice, and changes in foliage color. This variety provides extra flexibility to control for seasonal effects in our model. 
 
-In the testing set, we introduce three additional cameras: Axis-ToroPeak1 \footnote{\url{https://cameras.alertcalifornia.org/?pos=38.6603_-122.1906_10&id=Axis-ToroPeak1}}, Axis-Dewdrop1 \footnote{\url{https://cameras.alertcalifornia.org/?pos=33.5202_-116.4297_10&id=Axis-Dewdrop1}}, and Axis-Berryessa \footnote{\url{https://cameras.alertcalifornia.org/?pos=33.3598_-116.8595_10&id=Axis-Berryessa}}, which we refer to as Toro Peak, Dew Drop, and Berryessa. In this set, Toro Peak and Dew Drop are seasonal cameras, while Berryessa does not show substantial change across seasons. We select Dew Drop and Berryessa, located in Amador and Yolo Counties in Northern California, to evaluate the model's ability to generalize across geographic regions. Toro Peak, also located in Southern California in Riverside County, is selected to assess seasonal effects in a similar area. This configuration allows us to assess model performance across both seasonal variability and geographic context. Example images from each locations is shown in Figure~\ref{fig:level_examples}. 
+In the testing set, we introduce three additional cameras: Axis-ToroPeak1 \footnote{\url{https://cameras.alertcalifornia.org/?pos=38.6603_-122.1906_10&id=Axis-ToroPeak1}}, Axis-Dewdrop1 \footnote{\url{https://cameras.alertcalifornia.org/?pos=33.5202_-116.4297_10&id=Axis-Dewdrop1}}, and Axis-Berryessa \footnote{\url{https://cameras.alertcalifornia.org/?pos=33.3598_-116.8595_10&id=Axis-Berryessa}}, which we refer to as Toro Peak, Dew Drop, and Berryessa. In this set, Toro Peak and Dew Drop are seasonal cameras, while Berryessa does not show substantial change across seasons. We select Dew Drop and Berryessa, located in Amador and Yolo Counties in Northern California, to evaluate the model's ability to generalize across geographic regions. Toro Peak, also located in Southern California in Riverside County, is selected to assess seasonal effects in a similar area. This configuration allows us to assess model performance across both seasonal variability and geographic context. Example images from each location are shown in Figure~\ref{fig:level_examples}. 
 
 \subsection{Label Definition and Annotation}
 \label{sec:datalabeling}
@@ -345,10 +343,10 @@ Test precision   & 0.8202 & 0.8542 & 0.6545 & 0.7812 \\
 
 \end{table}
 
-Training accuracy is near-perfect across all three locations, whereas test accuracy remains in the 90% range. Recall, which measures the model’s ability to correctly identify all \ac{QoS} anomalies, is overall lower than precision, which measures the proportion of correctly predicted anomalies. 
+Training accuracy is near-perfect across all three locations, whereas test accuracy remains in the 90\% range. Recall, which measures the model’s ability to correctly identify all \ac{QoS} anomalies, is overall lower than precision, which measures the proportion of correctly predicted anomalies. 
 
 \subsection{Generalizability Across Camera Locations}
-To assess the model’s potential to generalize, we examine learned embeddings in the \ac{PC}1 versus \ac{PC}2 space. Figure~\ref{fig:final_pc_proj} displays the projection, where each point corresponds to a single image in the dataset and is colored according to its associated camera location. The embeddings are computed from the final trained encoder and projected into two dimensions using \ac{PCA}. This visualization directly compares spatial representations across camera sites. 
+To assess the model’s potential to generalize, we examine learned embeddings in the PC1 and PC2 space. Figure~\ref{fig:final_pc_proj} displays the projection, where each point corresponds to a single image in the dataset and is colored according to its associated camera location. The embeddings are computed from the final trained encoder and projected into two dimensions using \ac{PCA}. This visualization directly compares spatial representations across camera sites. 
 
 \begin{figure}
     \centering
@@ -358,7 +356,7 @@ camera locations.}
     \label{fig:final_pc_proj}
 \end{figure}
 
-We additionally test generalizability by evaluating on three new unseen datasets. Table~\ref{tab:camera_accuracies} lists the accuracy, precision, and recall values. 
+We additionally test generalizability by evaluating on three new unseen datasets: Berryessa, Dew Drop, and Toro Peak. Table~\ref{tab:camera_accuracies} lists the accuracy, precision, and recall values. 
 
 \begin{table}[h!]
 \centering
@@ -389,19 +387,20 @@ Recall & 0.9767 & 1.000 & 0.8049 & 0.9217 \\
 The results demonstrate that embedding-based anomaly detection can effectively identify image quality degradations. In this section, we discuss the key takeaways from the final model performance and analyze the model’s ability to generalize across different camera locations. We also highlight the key limitations of our study and directions for future work. 
 
 \subsection{Baseline Models}
-Across the cross-validation folds, $z_T$, achieves the highest validation accuracy ($92.60 ± 1.05\%$), followed by $z_D$ ($90.94 ± 1.77\%$) and $z_H$ ($69.03 ± 3.00\%$). It also demonstrates the most consistent results, with the lowest standard deviations across all training and validation tests. Interestingly, both triplet loss and DeepSAD achieve accuracies in the $90\%$ range while H-SAD is the only objective function failing to meet that threshold. The large gap between H-SAD and its alternatives likely reflects differences in label structure, in which the former is trained using a 4-point severity scale while the latter are trained using binary Normal/Abnormal labels. As such, learning more levels requires capturing more nuanced ordinal distinctions in image quality degradation, which can make the classification task inherently more difficult. 
+Across the cross-validation folds, triplet loss, achieves the highest validation accuracy ($92.60 ± 1.05\%$), followed by DeepSAD ($90.94 ± 1.77\%$) and H-SAD ($69.03 ± 3.00\%$). It also demonstrates the most consistent results, with the lowest standard deviations across all training and validation tests. Interestingly, both triplet loss and DeepSAD achieve accuracies in the $90\%$ range while H-SAD is the only objective function failing to meet that threshold. The large gap between H-SAD and its alternatives likely reflects differences in label structure, in which the former is trained using a 4-point severity scale while the latter are trained using binary Normal/Abnormal labels. As such, learning more levels requires capturing more nuanced ordinal distinctions in image quality degradation, which can make the classification task inherently more difficult. 
 
 \subsection{Final Multi-Camera Model}
-The final multi-camera model demonstrates relatively strong performance across all three camera locations in its training set. Table~\ref{tab:train_test_accs} shows test accuracies above $90\%$ for both seasonal and non-seasonal cameras, indicating that the model generalizes effectively to unseen environmental variations present in the training distribution. Among these locations, Coronado Hills achieves the highest overall performance and is the only site where recall exceeds precision. This suggests that the model is particularly effective at identifying a larger proportion of \ac{QoS} anomalies at locations with characteristics similar to Coronado Hills. 
+The final multi-camera model trained with triplet loss demonstrates relatively strong performance across all three camera locations in its training set. Table~\ref{tab:train_test_accs} shows test accuracies above $90\%$ for both seasonal and non-seasonal cameras, indicating that the model generalizes effectively to unseen environmental variations present in the training distribution. Among these locations, Coronado Hills achieves the highest overall performance and is the only site where recall exceeds precision. This suggests that the model is particularly effective at identifying a larger proportion of \ac{QoS} anomalies at this location. The tradeoff, however, is more false positives. 
 
-In contrast, Mesa Grande and Palomar Observatory exhibit higher precision than recall, indicating that anomaly prediction at these locations is more accurate, though some anomalous events remain undetected. This trend is especially pronounced at Palomar Observatory, where precision is highest among the three sites. Overall, precision exceeds recall, suggesting that the model adopts a more conservative strategy where it favors fewer false alarms at the expense of missing some \ac{QoS} anomalies. 
+In contrast, Mesa Grande and Palomar Observatory exhibit higher precision than recall, indicating that anomaly prediction at these locations is more accurate, though some anomalous events remain undetected. This trend is especially pronounced at Palomar Observatory, where precision is highest among the three sites. Overall, precision exceeds recall, suggesting that the model adopts a more conservative strategy at these locations, favoring fewer false alarms at the expense of missing some \ac{QoS} anomalies. 
 
 \subsection{Generalization Across Camera Locations}
 The embedding projection onto a shared latent space defined by \ac{PC}1 and \ac{PC}2 reveals that all camera locations occupy overlapping regions, though with varying degrees of dispersion (Figure~\ref{fig:final_pc_proj}). While some location-dependent spread is observed, there are no distinct clusters corresponding to individual cameras. This is desirable for generalization, as the absence of camera-specific outliers suggests that learned representations capture systemic visual encodings instead of memorizing location-specific characteristics. 
 
-For unseen cameras, classification accuracies reported in Table~\ref{tab:camera_accuracies} indicate an average accuracy of 77.76\%.
+For unseen cameras, classification accuracies reported in Table~\ref{tab:camera_accuracies} indicate an average accuracy of 77.76\%. However, accuracy alone does not fully capture model behavior, and in this setting, it hides a significant tradeoff between precision and recall. In particular, the model achieves a high overall recall of 0.9217 but a considerably lower precision of 0.4309, suggesting a tendency to over-predict \ac{QoS} anomalies at these new locations. This leads to more false positives despite stronger coverage of true anomalous events. 
 
-% with the model performing strongest on the two seasonal cameras: Dew Drop and Toro Peak. Accuracy for these cameras ranges from 81.82\% to 82.54\%, while the accuracy for non-seasonal Berryessa is 55.05\%, despite more non-seasonal cameras in the dataset. These results suggest that rather than seasonal variability, the model's ability to generalize is more influenced by environmental characteristics.
+Interestingly, Dew Drop and Toro Peak, both identified as seasonal cameras, outperform Berryessa, a location that does not observe significant environmental variability throughout seasons. With accuracies in the mid-80\% range compared to Berryessa’s 60.40\%, these results indicate that rather than seasonal factors, the model’s ability to generalize is more heavily influenced by other environmental characteristics. 
+
 
 % Visual inspection of Clear frames (Figure~\ref{fig:level_examples}) supports this interpretation: Dew Drop and Toro Peak appear more consistent with the training dataset, with arid mountainous terrain, while Berryessa contains a unique body of water. The presence of a water body likely contributes to reduced performance at Berryessa, suggesting that the model generalizes effectively only to locations with landscape and environmental contexts similar to those represented in the training set. Notably, Dew Drop, located in Amador County outside of southern California, still achieved reasonable results, indicating that the model can generalize across geographic regions when the environmental context is familiar. Therefore, the model can generalize across seasonal differences and varying lighting conditions within familiar terrains, but its performance significantly declines when presented with novel contexts.
 
@@ -479,7 +478,7 @@ For unseen cameras, classification accuracies reported in Table~\ref{tab:camera_
 
 \subsection{Limitations and Future Work}
 
-While the final multi-camera models demonstrate strong performance across the three cameras in the training set and reasonable generalization to familiar unseen landscapes, its scope is limited by the small number of cameras used in this study. With only three cameras in the final training set, the model cannot yet support the full scale of ALERTCalifornia’s growing network of over 1,200 cameras. Our limited dataset does not encompass the full range of diverse landscapes and environmental conditions present across the entire camera network, leaving it vulnerable to misclassifications errors in novel contexts, as seen with Berryessa. Another limitation is the aggregation of our 4-level image severity labels into a binary Normal and Abnormal classification. While this choice simplified our model training and evaluation, it also discards information that could be valuable when observing borderline cases or prioritizing maintenance. In practical deployment scenarios, a severity scale provides richer and more actionable insights for operators to distinguish between minor degradation issues and critical failures. 
+While the final multi-camera model demonstrate strong performance across the three cameras in the training set and moderate generalization to familiar unseen landscapes, its scope is limited by the small number of cameras used in this study. With only three cameras in the final training set, the model cannot yet support the full scale of ALERTCalifornia’s growing network of over 1,200 cameras. Our limited dataset does not encompass the full range of diverse landscapes and environmental conditions present across the entire camera network, leaving it vulnerable to misclassification errors in novel contexts, as seen with Berryessa. Another limitation is the aggregation of our 4-level image severity labels into a binary Normal and Abnormal classification. While this choice simplified our model training and evaluation, it also discards information that could be valuable when observing borderline cases or prioritizing maintenance. In practical deployment scenarios, a severity scale provides richer and more actionable insights for operators to distinguish between minor degradation issues and critical failures. 
 
 Future work should expand the dataset to include a larger, more representative set of cameras spanning diverse landscapes and climates. This would ensure stronger generalization across a broader range of environmental conditions. Additionally, this study primarily examines the semantic encoding of illumination, time of day, and season. We theorize that other illumination-related features, such as solar and lunar altitudes, are also likely represented in the learned feature space. Future research should investigate how these and other environmental factors, such as cloud cover, dew point, precipitation, and air quality, manifest in the feature space. Such analyses could provide greater insight into how the model encodes complex visual and environmental patterns, enhancing interpretability and robustness. To further improve interpretability and operational value, future work should additionally explore multi-level classification or continuous severity scoring to capture varying levels of image quality issues. 
 
@@ -548,7 +547,7 @@ Suppose we have a neural network $\phi(\cdot;\mathcal{W}) : \mathcal{X} \rightar
 
 where $c \in \mathbb{R}^d$ denotes the hypersphere cluster center around which the points are mapped~\cite{ruff2020deepsemisupervisedanomalydetection}.
 
-Crucially, this function assumes that most of the points in $X$ are Normal in ground truth. This allows us to incorporate the first term, which penalizes the distance from the unlabeled samples to the cluster center. This means that the network is incentivized to learn a set of weights $\mathcal{W}$ which pulls most unlabeled points close to the cluster center. 
+Crucially, this function assumes that most of the points in $X$ are Normal in ground truth. This allows us to incorporate the first term, which penalizes the distance from the unlabeled samples to the cluster center. This means that the network is incentivized to learn a set of weights $\mathcal{W}$ that pulls most unlabeled points close to the cluster center. 
 
 The second term utilizes the information from the labeled data to push known Abnormal points away. The data labeled as Normal are pulled even closer to the center, while those labeled Abnormal are pushed further away. The hyperparameter $\eta$ controls the influence of the second term relative to the first. Setting $\eta$ > 1 leads to the emphasis of labeled data over unlabeled data, while setting $\eta$ < 1 emphasizes unlabeled data over labeled data. The inclusion of this term is predicated on a second assumption--that Abnormal images vary greatly in appearance, while Normal images tend to be more similar to each other~\cite{ruff2020deepsemisupervisedanomalydetection}. 
 
