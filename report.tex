@@ -369,6 +369,62 @@ $^{*}$Seasonal camera locations.
 
 \end{table}
 
+To further access the model’s performance independent of a specific decision threshold, we generate \ac{ROC} curves and the corresponding \ac{AUC} for each camera location in Figure\ref{roc_curves}. These curves characterize the tradeoff between true positive and false positive rates, providing additional insight into the model’s ability to distinguish between Normal and Abnormal frames. 
+
+\begin{figure}[h!]
+    \centering
+    % Row 1
+    \begin{minipage}{\textwidth}
+        \centering
+        \begin{subfigure}{0.31\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{figures/corondo_hills_roc.png}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}{0.31\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{figures/mesa_grande_roc.png}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}{0.31\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{figures/palomar_roc.png}
+        \end{subfigure}
+
+        % Row 1 caption
+        \vspace{0.2cm}
+        \par\centering
+    \end{minipage}
+
+    \vspace{0.5cm} % spacing between rows
+
+    % Row 2
+    \begin{minipage}{\textwidth}
+        \centering
+        \begin{subfigure}{0.31\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{figures/berryessa_roc.png}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}{0.31\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{figures/dewdrop_roc.png}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}{0.31\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{figures/toropeak_roc.png}
+        \end{subfigure}
+
+        % Row 2 caption
+        \vspace{0.2cm}
+        \par\centering
+    \end{minipage}
+
+    \caption{\ac{ROC} curves at all training (a-c) and testing (b-e) camera locations.}
+    \label{fig:roc_curves}
+\end{figure}
+
 \section{Discussion}
 
 The results demonstrate that embedding-based anomaly detection can effectively identify image quality degradations. In this section, we discuss the key takeaways from the final model performance and analyze the model’s ability to generalize across different camera locations. We also highlight the key limitations of our study and directions for future work. 
@@ -384,9 +440,11 @@ In contrast, Mesa Grande and Palomar Observatory exhibit higher precision than r
 \subsection{Generalization Across Camera Locations}
 The embedding projection onto a shared latent space defined by PC1 and PC2 reveals that all camera locations occupy overlapping regions, though with varying degrees of dispersion (Figure~\ref{fig:final_pc_proj}). While some location-dependent spread is observed, there are no distinct clusters corresponding to individual cameras. This is desirable for generalization, as the absence of camera-specific outliers suggests that learned representations capture systemic visual encodings instead of memorizing location-specific characteristics. 
 
-For unseen cameras, classification accuracies reported in Table~\ref{tab:camera_accuracies} indicate an average accuracy of 77.76\%. However, accuracy alone does not fully capture model behavior, and in this setting, it hides a significant tradeoff between precision and recall. In particular, the model achieves a high overall recall of 92.17\% but a considerably lower precision of 43.09\%, suggesting a tendency to over-predict \ac{QoS} anomalies at these new locations. This leads to more false positives despite stronger coverage of true anomalous events. 
+For unseen cameras, classification accuracies reported in Table~\ref{tab:camera_accuracies} indicate an average accuracy of 77.76\%. However, accuracy alone does not fully capture model performance, and in this setting, it hides a significant tradeoff between precision and recall. In particular, across all unseen locations, the model achieves a high overall recall of 92.17\% but a considerably lower precision of 43.09\%, suggesting a tendency to over-predict \ac{QoS} anomalies. As a result, the model successfully identifies most of the anomalous frames at the expense of more false positives. This behavior reflects a sensitivity-focused approach that prioritizes detection coverage over minimizing false alarms. In the context of environmental monitoring, however, this tradeoff may be acceptable, as the consequence of missing a \ac{QoS} event can be greater than the cost of reviewing a false alarm. 
 
-Interestingly, Dew Drop and Toro Peak, both identified as seasonal cameras, outperform Berryessa, a location that does not observe significant environmental variability throughout seasons. With accuracies in the mid-80\% range compared to Berryessa’s 60.40\%, these results indicate that rather than seasonal factors, the model’s ability to generalize is more heavily influenced by other environmental characteristics. 
+Despite the reduction in precision, Figure~\ref{roc_curves} show that all camera locations achieve \ac{AUC} values above 0.90. These results indicate that the model has strong discriminative ability that effectively separates Normal and Abnormal frames. The discrepancy between the high \ac{AUC} values and lower precision suggests that classification accuracy may be more sensitive to the selected decision threshold, and that the model’s anomalous discrimination remains reliable. 
+
+Performance also varies across individual camera locations within this unseen dataset. Interestingly, Dew Drop and Toro Peak, both identified as seasonal cameras, outperform Berryessa, a location that does not observe significant environmental variability throughout seasons. With Dew Drop and Toro Peak accuracies in the mid-80\% range compared to Berryessa’s 60.40\%, these results indicate that rather than seasonal factors, the model’s ability to generalize is more heavily influenced by other environmental characteristics. 
 
 
 % Visual inspection of Clear frames (Figure~\ref{fig:level_examples}) supports this interpretation: Dew Drop and Toro Peak appear more consistent with the training dataset, with arid mountainous terrain, while Berryessa contains a unique body of water. The presence of a water body likely contributes to reduced performance at Berryessa, suggesting that the model generalizes effectively only to locations with landscape and environmental contexts similar to those represented in the training set. Notably, Dew Drop, located in Amador County outside of southern California, still achieved reasonable results, indicating that the model can generalize across geographic regions when the environmental context is familiar. Therefore, the model can generalize across seasonal differences and varying lighting conditions within familiar terrains, but its performance significantly declines when presented with novel contexts.
@@ -597,6 +655,8 @@ The final term is a weight regularization term, whose influence is controlled by
   \acro{GPU}{graphics processing unit}
   \acro{ORR}{operationally relevant region}
   \acro{SD}{standard deviation}
+  \acro{ROC}{receiver operating characteristic}
+  \acro{AUC}{area under the curve}
 \end{acronym}
 
 \end{document}
