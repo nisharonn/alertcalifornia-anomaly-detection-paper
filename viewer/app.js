@@ -1,6 +1,6 @@
 let DATA;
 
-fetch("../embedding_data/embeddings_updated.json")
+fetch("embedding_data/embeddings_updated.json")
   .then(r => r.json())
   .then(json => {
 
