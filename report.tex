@@ -256,7 +256,7 @@ $\mathbf{E_H}$ & -- & $1 \times 10^{-2}$ & $1 \times 10^{1}$ & $1 \times 10^{-6}
 \end{table}
 
 
-After training each encoder, we obtain three sets of embeddings $\{\mathbf{e_T}, \mathbf{e_D}, \mathbf{e_H}\}$. These are obtained by running inference on the labeled Coronado Hills data, as follows:
+After training each encoder, we obtain three sets of embeddings $\{\mathbf{e_T}, \mathbf{e_D}, \mathbf{e_H}\}$. These are obtained by running inference on the labeled Coronado Hills data, $\mathbf{C_L}$, as follows:
 \[\mathbf{e_T} = \mathbf{E_T}(\mathbf{C_L}), \quad \mathbf{e_D} = \mathbf{E_D}(\mathbf{C_L}), \quad \mathbf{e_H} = \mathbf{E_H}(\mathbf{C_L})\]
 \[\left|\mathbf{e_T}\right| = \left|\mathbf{e_D}\right| = \left|\mathbf{e_H}\right| =X\]
  
@@ -527,7 +527,11 @@ Future work should expand the dataset to include a larger, more representative s
 
 \section{Conclusion}
 
+We present a \ac{ViT}-based framework for detecting \ac{QoS} anomalies in ALERTCalifornia wildfire monitoring cameras. By pairing a \ac{ViT}-Base encoder with a lightweight classifier and a custom labeling scheme, we demonstrate the effectiveness of a supervised embedding-based approach for automated camera health monitoring. The final multi-camera model generalizes moderately well to unseen camera locations, with an average accuracy of $77.76\%$ and \ac{AUC}s above 0.93. These results are hopeful in the context of environmental monitoring, as the high \ac{AUC} indicates strong discriminative ability across thresholds.
 
+Our findings suggest that a supervised \ac{ViT}-Base framework provides a promising foundation for automated image quality assessment, but additional work is necessary to support scalability across a network as large as ALERTCalifornia’s. In particular, current generalization and scalability evaluations are limited, and further testing is required to assess model performance across a broader range of environmental conditions and geographic landscapes. Future efforts should aim to evaluate performance across a larger subset of the camera network and investigate methods for reducing false positives while maintaining the high recall observed in this work. 
+
+In a practical deployment setting, the proposed framework could be integrated into existing camera processing pipelines to continuously evaluate incoming frames and assign anomaly labels. Flagged alerts could then be sent to system operators for further inspection or maintenance, or used to adjust thresholds in downstream hazard detection systems. Ultimately, by supporting the automated detection of degraded camera feeds, this approach has the potential to improve the reliability and efficiency of large-scale monitoring operations. 
 
 \printbibliography
 
