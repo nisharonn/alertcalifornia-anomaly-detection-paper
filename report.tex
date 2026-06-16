@@ -68,7 +68,7 @@ Large-scale environmental monitoring networks rely on hundreds of geographically
 
 \section{Introduction}
 
-Large-scale environmental camera networks are critical infrastructure for the detection and prevention of hazardous events \cite{costa2020use, govil2020preliminary, mohapatra2022early}. The University of California San Diego’s ALERTCalifornia system, for one, is an ever-growing network that comprises over 1,200 cameras distributed across the state. These cameras capture still image frames, providing continuous visual coverage to support hazard detection and response. For such systems, performance depends not only on camera availability and robust hazard detection frameworks, but also on the quality of the captured images\cite{mahadev2026intelligent, wang2022semi}. Currently, many wildfire detection systems are optimized for ``clear'' conditions, often lacking the necessary preprocessing methods to handle environmental variability \cite{mahadev2026intelligent, wang2022semi}. This results in reduced accuracy when image quality is compromised. Implementing a \ac{QoS} anomaly detection framework allows such systems to dynamically adjust parameters and classification thresholds based on observed image quality \cite{govil2020preliminary}. Such adaptability may improve reliability and reduce the likelihood of missed events under adverse conditions, highlighting the potential value of integrating \ac{QoS} monitoring into large-scale environmental camera networks.
+Large-scale environmental camera networks are critical infrastructure for the detection and prevention of hazardous events \cite{costa2020use, govil2020preliminary, mohapatra2022early}. The University of California San Diego’s ALERTCalifornia system, for one, is an ever-growing network that comprises over 1,200 cameras distributed across the state. These cameras capture still image frames, providing continuous visual coverage to support hazard detection and response. For such systems, performance depends not only on robust hazard detection frameworks, but also on the quality of the captured images\cite{mahadev2026intelligent, wang2022semi}. Currently, many wildfire detection systems are optimized for ``clear'' conditions, often lacking the necessary preprocessing methods to handle environmental variability \cite{mahadev2026intelligent, wang2022semi}. This results in reduced accuracy when image quality is compromised. Implementing a \ac{QoS} anomaly detection framework allows such systems to dynamically adjust parameters and classification thresholds based on observed image quality \cite{govil2020preliminary}. Such adaptability may improve reliability and reduce the likelihood of missed events under adverse conditions, highlighting the potential value of integrating \ac{QoS} monitoring into large-scale environmental camera networks.
 
 \Ac{QoS} anomalies, different from conventional event-based abnormalities, arise from image degradation issues that ultimately reduce camera reliability. Unlike event-based inconsistencies caused by unusual activities in the scene, \ac{QoS} anomalies manifest as visibility issues and camera quality impairments. In environmental contexts, they look like clouds or fog blocking the ground, dust and debris accumulation on the camera lens, water droplets and condensation, and physical obstructions entering the field of view. They may also result from hardware-related factors such as loss of focus, glare, and reduced contrast. \Ac{QoS} anomalies are heavily influenced by natural weather patterns, illumination cycles, and seasonal changes, and they are often subjective and sparsely labeled. Some irregularities are also trivial and temporary, while others may significantly affect the usefulness of a camera. As a result, the development of an outdoor anomaly detection model is uniquely challenging—especially when the conditions directly contrast established anomaly detection frameworks, where environmental variability is tightly constrained \cite{bergmann2019mvtec, lin2025visual}.
 
@@ -106,15 +106,7 @@ Our overall experimental design consists of four main components: (1) data colle
 \label{sec:datacollection}
 
 We source the data from cameras in the ALERTCalifornia network. These cameras exhibit variations in weather conditions, lighting, and terrain (as seen in Figure~\ref{fig:level_examples}), making them suitable for training and testing the \Ac{QoS} anomaly detection model. To construct the labeled dataset, we extract still images from cameras over a one-year period: October 1, 2024, to September 30, 2025. We sample frames at a fixed hourly interval by selecting the image closest to the top of each hour. Because camera views may occasionally be adjusted by local emergency operators, we use pan, tilt, and zoom information from the external metadata to maintain visual consistency across the dataset. Specifically, we exclude frames whose values deviate from the camera-specific median by more than 4° in pan, 0.1° in tilt, or 0.1× in zoom. These thresholds are chosen to minimize scene variation across cameras during model training. Table~\ref{tab:frame_counts} describes the size of each dataset after filtering. 
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\linewidth]{figures/level_image_grid.png}
-    \caption{Representative examples corresponding to each level of the 4-point ordinal scale across all six cameras. Seasonal cameras are indicated with an asterisk(*).}
-    \label{fig:level_examples}
-\end{figure}
-
-\begin{table}[h]
+\begin{table}[H]
 \scriptsize
 \centering
 \begin{threeparttable}
@@ -184,6 +176,13 @@ Level 4 - Severe & 15 & 7 & 34 & 56 \\
 To train our initial model, we focus on three cameras located in San Diego County: Axis-CoronadoHillS \footnote{\url{https://cameras.alertcalifornia.org/?pos=38.6603_-122.1906_10&id=Axis-CoronadoHillsS}}, Axis-PalomarObs1 \footnote{\url{https://cameras.alertcalifornia.org/?pos=33.3600_-116.8600_10&id=Axis-PalomarObs1}}, and Axis-MesaGrandeNorth \footnote{\url{https://cameras.alertcalifornia.org/?pos=33.1900_-116.7600_10&id=Axis-MesaGrandeNorth}}. Throughout the rest of this paper, we will refer to these three locations as Coronado Hills, Palomar Observatory, and Mesa Grande, respectively. These cameras capture different landscapes and varying degrees of seasonal change, making them suitable for our objective. Coronado Hills and Mesa Grande are cameras that do not capture significant seasonal changes in the environment. Palomar Observatory captures notable seasonal changes, such as snow, ice, and changes in foliage color. This variety provides extra flexibility to control for seasonal effects in our model. 
 
 In the testing set, we introduce three additional cameras: Axis-ToroPeak1 \footnote{\url{https://cameras.alertcalifornia.org/?pos=38.6603_-122.1906_10&id=Axis-ToroPeak1}}, Axis-Dewdrop1 \footnote{\url{https://cameras.alertcalifornia.org/?pos=33.5202_-116.4297_10&id=Axis-Dewdrop1}}, and Axis-Berryessa \footnote{\url{https://cameras.alertcalifornia.org/?pos=33.3598_-116.8595_10&id=Axis-Berryessa}}, which we refer to as Toro Peak, Dew Drop, and Berryessa. In this set, Toro Peak and Dew Drop are seasonal cameras, while Berryessa does not show substantial change across seasons. We select Dew Drop and Berryessa, located in Amador and Yolo Counties in Northern California, to evaluate the model's ability to generalize across geographic regions. Toro Peak, also located in Southern California in Riverside County, is selected to assess seasonal effects in a similar area. This configuration allows us to assess model performance across both seasonal variability and geographic context. Example images from each location are shown in Figure~\ref{fig:level_examples}. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{figures/level_image_grid.png}
+    \caption{Representative examples corresponding to each level of the 4-point ordinal scale across all six cameras. Seasonal cameras are indicated with an asterisk(*).}
+    \label{fig:level_examples}
+\end{figure}
 
 \subsection{Label Definition and Annotation}
 \label{sec:datalabeling}
@@ -369,7 +368,7 @@ $^{*}$Seasonal camera locations.
 
 \end{table}
 
-To further access the model’s performance independent of a specific decision threshold, we generate \ac{ROC} curves and the corresponding \ac{AUC} for each camera location in Figure\ref{roc_curves}. These curves characterize the tradeoff between true positive and false positive rates, providing additional insight into the model’s ability to distinguish between Normal and Abnormal frames. 
+To further access the model’s performance independent of a specific decision threshold, we generate \ac{ROC} curves and the corresponding \ac{AUC} for each camera location in Figure\ref{fig:roc_curves}. These curves characterize the tradeoff between true positive and false positive rates, providing additional insight into the model’s ability to distinguish between Normal and Abnormal frames. 
 
 \begin{figure}[h!]
     \centering
@@ -421,7 +420,7 @@ To further access the model’s performance independent of a specific decision t
         \par\centering
     \end{minipage}
 
-    \caption{\ac{ROC} curves at all training (a-c) and testing (b-e) camera locations.}
+    \caption{\ac{ROC} curves at all training (top row) and testing (bottom row) camera locations.}
     \label{fig:roc_curves}
 \end{figure}
 
@@ -442,7 +441,7 @@ The embedding projection onto a shared latent space defined by PC1 and PC2 revea
 
 For unseen cameras, classification accuracies reported in Table~\ref{tab:camera_accuracies} indicate an average accuracy of 77.76\%. However, accuracy alone does not fully capture model performance, and in this setting, it hides a significant tradeoff between precision and recall. In particular, across all unseen locations, the model achieves a high overall recall of 92.17\% but a considerably lower precision of 43.09\%, suggesting a tendency to over-predict \ac{QoS} anomalies. As a result, the model successfully identifies most of the anomalous frames at the expense of more false positives. This behavior reflects a sensitivity-focused approach that prioritizes detection coverage over minimizing false alarms. In the context of environmental monitoring, however, this tradeoff may be acceptable, as the consequence of missing a \ac{QoS} event can be greater than the cost of reviewing a false alarm. 
 
-Despite the reduction in precision, Figure~\ref{roc_curves} show that all camera locations achieve \ac{AUC} values above 0.90. These results indicate that the model has strong discriminative ability that effectively separates Normal and Abnormal frames. The discrepancy between the high \ac{AUC} values and lower precision suggests that classification accuracy may be more sensitive to the selected decision threshold, and that the model’s anomalous discrimination remains reliable. 
+Despite the reduction in precision, Figure~\ref{fig:roc_curves} show that all camera locations achieve \ac{AUC} values above 0.93. These results indicate that the model has strong discriminative ability that effectively separates Normal and Abnormal frames. The discrepancy between the high \ac{AUC} values and lower precision suggests that classification accuracy may be more sensitive to the selected decision threshold, and that the model’s anomalous discrimination remains reliable. 
 
 Performance also varies across individual camera locations within this unseen dataset. Interestingly, Dew Drop and Toro Peak, both identified as seasonal cameras, outperform Berryessa, a location that does not observe significant environmental variability throughout seasons. With Dew Drop and Toro Peak accuracies in the mid-80\% range compared to Berryessa’s 60.40\%, these results indicate that rather than seasonal factors, the model’s ability to generalize is more heavily influenced by other environmental characteristics. 
 
@@ -660,5 +659,6 @@ The final term is a weight regularization term, whose influence is controlled by
 \end{acronym}
 
 \end{document}
+
 
 
