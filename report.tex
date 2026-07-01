@@ -256,7 +256,7 @@ $\mathbf{E_H}$ & -- & $1 \times 10^{-2}$ & $1 \times 10^{1}$ & $1 \times 10^{-6}
 \end{table}
 
 
-After training each encoder, we obtain three sets of embeddings $\{\mathbf{e_T}, \mathbf{e_D}, \mathbf{e_H}\}$, by running inference on the labeled Coronado Hills data, $\mathbf{C_L}$. Since the classification head is trained with a supervised objective, we run inference only on the labeled dataset. 
+After training each encoder, we obtain three sets of embeddings, $\mathbf{e_i} \in  \{\mathbf{e_T}, \mathbf{e_D}, \mathbf{e_H}\}$, by running inference on the labeled Coronado Hills data, $\mathbf{C_L}$. Since the classification head is trained with a supervised objective, we run inference only on the labeled dataset. 
 
 Finally, we separate each image embedding set into batches of size 32 and use each to train its corresponding \ac{MLP} head $\mathbf{H_i} \in \{\mathbf{H_T}, \mathbf{H_D}, \mathbf{H_H}\}$. For simplicity, we train using the cross-entropy loss function, as provided by PyTorch \footnote{\url{https://pytorch.org/}}. By using each $\mathbf{H_i}$ to perform inference on its corresponding embedding, we obtain output sets $\mathbf{y_i} \in \{\mathbf{y_T}, \mathbf{y_D}, \mathbf{y_H}\}$, where:
 %\[\left|\mathbf{y_T}\right| = \left|\mathbf{y_D}\right| = \left|\mathbf{y_H}\right| =X\]
