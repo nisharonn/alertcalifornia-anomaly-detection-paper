@@ -443,9 +443,9 @@ Despite the reduction in precision, Figure~\ref{fig:roc_curves} show that all ca
 
 Performance also varies across individual camera locations within the unseen dataset. Interestingly, Dew Drop and Toro Peak, both identified as seasonal cameras, outperform Berryessa, a location that does not observe significant seasonal variability. With accuracies in the mid-80\% range compared to Berryessa’s 60.40\%, these results suggest that rather than seasonal factors, the model’s ability to generalize is more heavily influenced by other environmental characteristics. In particular, Toro Peak, which is located in Southern California and shares visual characteristics with the training distribution, achieves the highest overall accuracy and precision among the three unseen locations. Unlike Berryessa and Dew Drop, it does not exhibit the pronounced imbalance between precision and recall, indicating a more stable tradeoff between false positives and false negatives. Overall, these results suggest that the model generalizes more effectively to camera locations whose visual characteristics resemble those seen in training. 
 
-This trend becomes even more apparent when examining false positive frames from each unseen camera location, as seen in Figure~\ref{false_positives}. At Toro Peak, whose visual characteristics most closely resemble those in the training set, false positives were exclusive to nighttime conditions. In low light settings, features in these frames likely deviated from those originally observed in the training cameras. Specifically, there is less visual information about terrain and landscape features. Notably, under daytime conditions, all frames predicted as anomalous were accurately classified. A similar pattern emerges at Dew Drop, where 67.65\% of false positive frames were captured at night. Together, these observations suggest that reduced illumination introduces visual patterns that are less represented in the training data, in turn increasing the likelihood of false positives. 
+This trend becomes even more apparent when examining false positive frames from each unseen camera location, as seen in Figure~\ref{fig:false_positives}. At Toro Peak, whose visual characteristics most closely resemble those in the training set, false positives were exclusive to nighttime conditions. In low light settings, features in these frames likely deviated from those originally observed in the training cameras. Specifically, there is less visual information about terrain and landscape features. Notably, under daytime conditions, all frames predicted as anomalous were accurately classified. A similar pattern emerges at Dew Drop, where 67.65\% of false positive frames were captured at night. Together, these observations suggest that reduced illumination introduces visual patterns that are less represented in the training data, in turn increasing the likelihood of false positives. 
 
-Berryessa, however, presents a different challenge. Unlike all other cameras, Berryessa contains a large body of water, which is a visual feature unique to its location. Especially during nighttime conditions, this water surface resembles a layer of cloud (see Figure~\ref{false_positives}). We hypothesize that this feature likely explains the disproportionately large number of false positives, as it mirrors visual cues that the model associates with \ac{QoS} anomalies. These findings further reinforce that the model is capable of generalizing across seasonal and environmental variation when the visual characteristics remain similar to those seen during training. However, performance declines when novel contexts are introduced. To achieve robust performance across the broader ALERTCalifornia network, a more diverse training set that better captures variation in terrain, illumination, seasonal conditions, and anomaly types is required. 
+Berryessa, however, presents a different challenge. Unlike all other cameras, Berryessa contains a large body of water, which is a visual feature unique to its location. Especially during nighttime conditions, this water surface resembles a layer of cloud (see Figure~\ref{fig:false_positives}). We hypothesize that this feature likely explains the disproportionately large number of false positives, as it mirrors visual cues that the model associates with \ac{QoS} anomalies. These findings further reinforce that the model is capable of generalizing across seasonal and environmental variation when the visual characteristics remain similar to those seen during training. However, performance declines when novel contexts are introduced. To achieve robust performance across the broader ALERTCalifornia network, a more diverse training set that better captures variation in terrain, illumination, seasonal conditions, and anomaly types is required. 
 
 \begin{figure}[h!]
     \centering
@@ -454,19 +454,19 @@ Berryessa, however, presents a different challenge. Unlike all other cameras, Be
     \begin{subfigure}{0.31\textwidth}
         \centering
         \includegraphics[width=\linewidth]{figures/toropeak_fp1.jpg}
-        \caption{Toro Peak nighttime}
+        \caption{Toro Peak}
     \end{subfigure}
     \hfill
     \begin{subfigure}{0.31\textwidth}
         \centering
         \includegraphics[width=\linewidth]{figures/dewdrop_fp1.jpg}
-        \caption{Dew Drop nighttime}
+        \caption{Dew Drop}
     \end{subfigure}
     \hfill
     \begin{subfigure}{0.31\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{figures/berryessa_fp1.jpg}
-        \caption{Berryessa nighttime}
+        \includegraphics[width=\linewidth]{figures/berryessa_fp2.jpg}
+        \caption{Berryessa}
     \end{subfigure}
 
     \vspace{0.5em}
@@ -475,19 +475,19 @@ Berryessa, however, presents a different challenge. Unlike all other cameras, Be
     \begin{subfigure}{0.31\textwidth}
         \centering
         \includegraphics[width=\linewidth]{figures/toropeak_fp2.jpg}
-        \caption{Toro Peak daytime}
+        \caption{Toro Peak}
     \end{subfigure}
     \hfill
     \begin{subfigure}{0.31\textwidth}
         \centering
         \includegraphics[width=\linewidth]{figures/dewdrop_fp2.jpg}
-        \caption{Dew Drop daytime}
+        \caption{Dew Drop}
     \end{subfigure}
     \hfill
     \begin{subfigure}{0.31\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{figures/berryessa_fp2.jpg}
-        \caption{Berryessa daytime}
+        \includegraphics[width=\linewidth]{figures/berryessa_fp1.jpg}
+        \caption{Berryessa}
     \end{subfigure}
 
     \caption{False positive frames from each of the unseen camera locations.}
