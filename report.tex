@@ -457,80 +457,7 @@ Several nighttime frames at Toro Peak and Dew Drop exhibit significantly reduced
     \label{fig:false_positives}
 \end{figure}
 
-Taken together, these findings highlight the complex and nuanced task of identifying \ac{QoS} anomalies. In particular, ambiguity-driven errors and true generalization limitations interact to influence model results. To achieve robust performance across the broader ALERTCalifornia network, both a diverse training set and rigorous labeling guidelines are required. The training set must capture variations in terrain, illumination, seasonal conditions, and anomaly types, while refined labeling guidelines should account for the subjective nature of image quality judgments through clearer, measurable thresholds for anomaly severity. 
-
-% Visual inspection of Clear frames (Figure~\ref{fig:level_examples}) supports this interpretation: Dew Drop and Toro Peak appear more consistent with the training dataset, with arid mountainous terrain, while Berryessa contains a unique body of water. The presence of a water body likely contributes to reduced performance at Berryessa, suggesting that the model generalizes effectively only to locations with landscape and environmental contexts similar to those represented in the training set. Notably, Dew Drop, located in Amador County outside of southern California, still achieved reasonable results, indicating that the model can generalize across geographic regions when the environmental context is familiar. Therefore, the model can generalize across seasonal differences and varying lighting conditions within familiar terrains, but its performance significantly declines when presented with novel contexts.
-
-% Specifically, the confusion matrix for Berryessa (Figure~\ref{fig:berryessa_confusion}) shows a high number of false positives, where Normal images are misclassified as Abnormal. Figure~\ref{fig:berryessa_comparison} highlights several examples. We hypothesize that this misclassification is primarily due to the presence of a body of water, which visually resembles cloud cover. For comparison, the second row shows Abnormal images from the training set. Because this visual feature was not represented as Normal in the training data, the model has few reference examples, leading to misclassifications when it resembles clouds. 
-
-% \begin{figure}[t]
-%     \centering
-%     \includegraphics[width=0.6\linewidth]{figures/berryessa_confusion_matrix.png}
-%     \caption{Confusion matrix for the Berryessa camera on the test set. The axes show predicted and true Normal/Abnormal labels.}
-%     \label{fig:berryessa_confusion}
-% \end{figure}
-
-% \begin{figure}[h!]
-%     \centering
-%     % Row 1
-%     \begin{minipage}{\textwidth}
-%         \centering
-%         \begin{subfigure}{0.31\textwidth}
-%             \centering
-%             \includegraphics[width=\linewidth]{figures/berryessa1.jpg}
-%             \subcaption{Coronado Hills}
-%         \end{subfigure}
-%         \hfill
-%         \begin{subfigure}{0.31\textwidth}
-%             \centering
-%             \includegraphics[width=\linewidth]{figures/berryessa2.jpg}
-%             \subcaption{Mesa Grande}
-%         \end{subfigure}
-%         \hfill
-%         \begin{subfigure}{0.31\textwidth}
-%             \centering
-%             \includegraphics[width=\linewidth]{figures/berryessa3.jpg}
-%             \subcaption{Palomar Observatory}
-%         \end{subfigure}
-
-%         % Row 1 caption
-%         \vspace{0.2cm}
-%         \par\centering
-%     \end{minipage}
-
-%     \vspace{0.5cm} % spacing between rows
-
-%     % Row 2
-%     \begin{minipage}{\textwidth}
-%         \centering
-%         \begin{subfigure}{0.31\textwidth}
-%             \centering
-%             \includegraphics[width=\linewidth]{figures/coronado1.jpg}
-%             \subcaption{Coronado Hills}
-%         \end{subfigure}
-%         \hfill
-%         \begin{subfigure}{0.31\textwidth}
-%             \centering
-%             \includegraphics[width=\linewidth]{figures/palomar2.jpg}
-%             \subcaption{Palomar Observatory}
-%         \end{subfigure}
-%         \hfill
-%         \begin{subfigure}{0.31\textwidth}
-%             \centering
-%             \includegraphics[width=\linewidth]{figures/mesa3.jpg}
-%             \subcaption{Mesa Grande}
-%         \end{subfigure}
-
-%         % Row 2 caption
-%         \vspace{0.2cm}
-%         \par\centering
-%     \end{minipage}
-
-%     \caption{False positive classifications at Berryessa (images a-c) compared to Abnormal image examples from cameras in the training set (images d-f).}
-%     \label{fig:berryessa_comparison}
-% \end{figure}
-
-% This highlights the importance of incorporating broad and comprehensive landscapes during training. With a more representative dataset, the model exhibits the capability to maintain consistent performance across locations with varying weather conditions, even across broader temporal contexts such as seasons and times of day. 
+Taken together, these findings highlight the complex and nuanced task of identifying \ac{QoS} anomalies. In particular, label uncertainties and true generalization limitations interact to influence model results. To achieve robust performance across the broader ALERTCalifornia network, both a diverse training set and rigorous labeling guidelines are required. The training set must capture variations in terrain, illumination, seasonal conditions, and anomaly types, while refined labeling guidelines should account for the subjective nature of image quality judgments through clearer, measurable thresholds for anomaly severity. 
 
 
 \subsection{Limitations and Future Work}
@@ -540,7 +467,7 @@ While the final multi-camera model demonstrates strong performance across the th
 
 Another limitation is the aggregation of our 4-level image severity labels into a binary Normal and Abnormal classification. While this choice simplified our model training and evaluation, it also discards information that could be valuable when observing borderline cases or prioritizing maintenance. In practical deployment scenarios, a severity scale provides richer and more actionable insights for operators to distinguish between minor degradation issues and critical failures. 
 
-Another significant limitation is the construction of the labeled dataset. Despite our best efforts to maintain consistency through a defined annotation rubric and the use of a majority vote, the assessment of an anomalous event is inherently subjective. Given the diversity of the four annotators and the fact that the labeling work spanned multiple weeks, slight shifts in interpretation were unavoidable and unfortunately present in our final labeled dataset. Specifically, ambiguous frames often lacked a clear consensus and disagreement between annotators is common for images exhibiting gradual degradation or visibility. This issue is particularly evident in nighttime frames, as subsequently revealed by the false positives analysis. We acknowledge that limitation likely introduced noise and uncertainty that may have affected both the model training and evaluation. Future work should invest more time and resources to uphold the integrity of the dataset, such as refining labeling guidelines or using confidence-based annotations. 
+Another significant limitation is the construction of the labeled dataset. Despite our best efforts to maintain consistency through a defined annotation rubric and the use of a majority vote, the assessment of an anomalous event is inherently subjective. Given the diversity of the four annotators and the fact that the labeling work spanned multiple weeks, slight shifts in interpretation were unavoidable and unfortunately present in our final labeled dataset. Specifically, ambiguous frames often lacked a clear consensus and disagreement between annotators is common for images exhibiting gradual degradation or visibility. This issue is particularly evident in nighttime frames, as revealed by the false positives analysis. We acknowledge this limitation likely introduced noise and uncertainty that may have affected both the model training and evaluation. Future work should invest more time and resources to uphold the integrity of the dataset, such as refining labeling guidelines or using confidence-based annotations. 
 
 This study primarily investigates the discriminative ability of a classification model to distinguish between Normal and Abnormal frames. While we extract feature embeddings using a \ac{ViT}-Base encoder, the semantic structure of the resulting lower-dimensional feature space is not explicitly analyzed. An interesting extension of this work would be to examine how environmental factors such as illumination, time of day, season, and weather conditions are encoded within the embedding space. Such analyses could provide deeper insight into how the model represents complex visual and environmental patterns, enhancing interpretability and robustness. To further improve interpretability and operational value, future work could also explore multi-level classification or continuous severity scoring to capture varying levels of image quality issues. 
 
