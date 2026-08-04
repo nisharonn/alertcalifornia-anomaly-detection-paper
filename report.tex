@@ -196,7 +196,7 @@ To construct our labeled dataset for supervised learning, we design a camera-agn
     \item\textbf{Level 4–Severe:} An obstruction covers more than 50\% of the \ac{ORR}. The camera is unreliable for response operations.                   
 \end{itemize}
 
-Four annotators review each image to ensure labeling consistency and reduce subjective bias. The final label is determined by majority opinion, in which at least 3 annotators agree. Images with conflicting or tied labels are separately addressed in a team meeting to reach a consensus. Leveraging Label Studio’s random sampling setting, we complete a total of 6,281 tasks for the training set (see Table~\ref{tab:frame_counts} for complete counts). Figure~\ref{fig:level_examples} highlights examples of each level across cameras using this labeling scheme. 
+Four annotators review each image to ensure labeling consistency and reduce subjective bias. The final label is determined by majority opinion, in which at least 3 annotators agree. Images with conflicting or tied labels are separately addressed in a team meeting to reach a consensus. To assess inter-rater agreement, we compute Krippendorff’s $\alpha$ using the ordinal severity labels, obtaining a value of 0.6939. Leveraging Label Studio’s random sampling setting, we complete a total of 6,281 tasks for the training set (see Table~\ref{tab:frame_counts} for complete counts). Figure~\ref{fig:level_examples} highlights examples of each level across cameras using this labeling scheme. 
 
 Once we obtain our labeled dataset, we downsample and standardize the images to a size of 224 x 224 pixels with 3 channels. Then, we convert them into tensors of size 224 x 224 x 3. In their processed form, each image has 150,528 features.  We then partition the dataset collected from the three training cameras into a random 80\% training and a 20\% held-out test split. This training split is used to optimize the model while the held-out test split provides an evaluation on unseen images from the same camera locations. Finally, all training and held-out test data are divided into batches of size 32 to maximize the computational power of a single \ac{GPU} during training. 
 
@@ -330,18 +330,18 @@ $^{*}$Seasonal camera locations.
 
 Training accuracy is near-perfect across all three locations, whereas test accuracy remains in the 90\% range. Recall, which measures the model’s ability to correctly identify all \ac{QoS} anomalies, is overall lower than precision, which measures the proportion of correctly predicted anomalies. 
 
-\subsection{Generalizability Across Camera Locations}
-To assess the model’s potential to generalize, we examine learned embeddings in the PC1 and PC2 space. Figure~\ref{fig:final_pc_proj} displays the projection, where each point corresponds to a single image in the dataset and is colored according to its associated camera location. The embeddings are computed from the final trained encoder and projected into two dimensions using \ac{PCA}. This visualization directly compares spatial representations across camera sites. 
+\subsection{Generalization Across Camera Locations}
+% To assess the model’s potential to generalize, we examine learned embeddings in the PC1 and PC2 space. Figure~\ref{fig:final_pc_proj} displays the projection, where each point corresponds to a single image in the dataset and is colored according to its associated camera location. The embeddings are computed from the final trained encoder and projected into two dimensions using \ac{PCA}. This visualization directly compares spatial representations across camera sites. 
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.85\linewidth]{figures/final_p1p2.png}
-    \caption{PC1 vs. PC2 projection of the final model trained using triplet loss, colored by
-camera locations.}
-    \label{fig:final_pc_proj}
-\end{figure}
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=0.85\linewidth]{figures/final_p1p2.png}
+%     \caption{PC1 vs. PC2 projection of the final model trained using triplet loss, colored by
+% camera locations.}
+%     \label{fig:final_pc_proj}
+% \end{figure}
 
-We additionally test generalizability beyond the training distribution by evaluating on three new unseen datasets: Berryessa, Dew Drop, and Toro Peak. Table~\ref{tab:camera_accuracies} lists the balanced accuracy, precision, and recall values. 
+We test generalization beyond the training distribution by evaluating on three new unseen datasets: Berryessa, Dew Drop, and Toro Peak. Table~\ref{tab:camera_accuracies} lists the balanced accuracy, precision, and recall values. 
 
 \begin{table}[h]
 \centering
@@ -434,11 +434,11 @@ In contrast, Mesa Grande and Palomar Observatory exhibit higher precision than r
 This variation in model behavior across camera locations indicates that even within the training distribution, performance is influenced by location-specific visual characteristics. Nonetheless, the consistently high accuracy across all three locations demonstrates that the model remains robust to moderate environmental and seasonal variability. 
 
 \subsection{Generalization Across Camera Locations}
-The embedding projection onto the shared latent space defined by PC1 and PC2 reveals that all camera locations occupy overlapping regions, though with varying degrees of dispersion (Figure~\ref{fig:final_pc_proj}). While some location-dependent spread is observed, there appears to be no distinct clusters corresponding to individual cameras. This suggests that the dominant variation captured by the learned representations is not solely driven by camera identity. This behavior is encouraging for generalization, as the absence of camera-specific outliers indicate that embeddings learned from different locations largely share a feature space. 
+% The embedding projection onto the shared latent space defined by PC1 and PC2 reveals that all camera locations occupy overlapping regions, though with varying degrees of dispersion (Figure~\ref{fig:final_pc_proj}). While some location-dependent spread is observed, there appears to be no distinct clusters corresponding to individual cameras. This suggests that the dominant variation captured by the learned representations is not solely driven by camera identity. This behavior is encouraging for generalization, as the absence of camera-specific outliers indicates that embeddings learned from different locations largely share a feature space. 
 
 For unseen cameras, classification accuracies reported in Table~\ref{tab:camera_accuracies} indicate an average balanced accuracy of 82.88\%. However, accuracy alone does not fully capture model performance, and in this setting, it hides a significant tradeoff between precision and recall. In particular, across all unseen locations, the model achieves a high average recall of 92.72\% but a considerably lower precision of 45.60\%, suggesting a tendency to over-predict \ac{QoS} anomalies. As a result, the model successfully identifies most of the anomalous frames at the expense of more false positives. This behavior reflects a sensitivity-focused approach that prioritizes detection coverage over minimizing false alarms. In the context of environmental monitoring, however, this tradeoff may be acceptable, as the consequence of missing a \ac{QoS} event can be greater than the cost of reviewing a false alarm. 
 
-Despite the reduction in precision, Figure~\ref{fig:roc_curves} show that all camera locations achieve \ac{AUC} values above 0.93. These results indicate that the model has strong discriminative ability that effectively separates Normal and Abnormal frames. The discrepancy between the high \ac{AUC} values and lower precision suggests that classification accuracy may be more sensitive to the selected decision threshold, and that the model’s anomalous discrimination remains reliable. 
+Despite the reduction in precision, Figure~\ref{fig:roc_curves} shows that all camera locations achieve \ac{AUC} values above 0.93. These results indicate that the model has strong discriminative ability that effectively separates Normal and Abnormal frames. The discrepancy between the high \ac{AUC} values and lower precision suggests that classification accuracy may be more sensitive to the selected decision threshold, and that the model’s anomalous discrimination remains reliable. 
 
 Performance also varies across individual camera locations within the unseen dataset. Interestingly, Dew Drop and Toro Peak, both identified as seasonal cameras, outperform Berryessa, a location that does not observe significant seasonal variability. Dew Drop and Toro Peak achieve balanced accuracies of 90.61% and 83.73%, respectively, compared to Berryessa's 74.31%. These results suggest that rather than seasonal factors, the model’s ability to generalize is more heavily influenced by other environmental characteristics. In particular, Toro Peak, which is located in Southern California and shares visual characteristics with the training distribution, achieves the highest balanced accuracy and precision among the three unseen locations. Unlike Berryessa and Dew Drop, it does not exhibit the pronounced imbalance between precision and recall, indicating a more stable tradeoff between false positives and false negatives. Overall, these results suggest that the model generalizes more effectively to camera locations whose visual characteristics resemble those seen in training. 
 
@@ -466,7 +466,27 @@ While the final multi-camera model demonstrates strong performance across the th
 
 Another limitation is the aggregation of our 4-level image severity labels into a binary Normal and Abnormal classification. While this choice simplified our model training and evaluation, it also discards information that could be valuable when observing borderline cases or prioritizing maintenance. In practical deployment scenarios, a severity scale provides richer and more actionable insights for operators to distinguish between minor degradation issues and critical failures. 
 
-Another significant limitation is the construction of the labeled dataset. Despite our best efforts to maintain consistency through a defined annotation rubric and the use of a majority vote, the assessment of an anomalous event is inherently subjective. Given the diversity of the four annotators and the fact that the labeling work spanned multiple weeks, slight shifts in interpretation were unavoidable and unfortunately present in our final labeled dataset. Specifically, ambiguous frames often lacked a clear consensus and disagreement between annotators is common for images exhibiting gradual degradation or visibility. This issue is particularly evident in nighttime frames, as revealed by the false positives analysis. We acknowledge this limitation likely introduced noise and uncertainty that may have affected both the model training and evaluation. Future work should invest more time and resources to uphold the integrity of the dataset, such as refining labeling guidelines or using confidence-based annotations. 
+Another significant limitation is the construction of the labeled dataset. Despite our best efforts to maintain consistency through a defined annotation rubric and the use of a majority vote, the assessment of an anomalous event is inherently subjective. Given the diversity of the four annotators and the fact that the labeling work spanned multiple weeks, slight shifts in interpretation were unavoidable and unfortunately present in our final labeled dataset. 
+
+To quantify this uncertainty, we measure inter-rater agreement using Krippendorff’s $\alpha$, obtaining a value of 0.6939. We additionally examine the consistency of agreement across annotators by performing a leave-one-out sensitivity analysis, producing $\alpha$ values ranging from 0.6602 to 0.7645 (Table~\ref{tab:rater_agreement}). These results indicate moderate variability in agreement across annotators, suggesting that annotator disagreement is not only driven by labeling mistakes, but also by subjective interpretations of severity. 
+
+\begin{table}[h!]
+\centering
+\caption{Inter-rater agreement measured using Krippendorff's $\alpha$. The overall value is computed using labels from all four annotators. Minimum and maximum values correspond to a leave-one-annotator-out sensitivity analysis, highlighting the range of agreement across annotator subsets.}
+\label{tab:rater_agreement}
+
+\begin{tabular}{lc}
+\toprule
+\textbf{Metric} & \textbf{Value} \\
+\midrule
+Overall Krippendorff's $\alpha$ & 0.6939 \\
+Minimum $\alpha$ & 0.6601 \\
+Maximum $\alpha$ & 0.7645 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+This ambiguity is most apparent in borderline cases, particularly for images exhibiting gradual degradation or visibility. As revealed by the false positives analysis, many nighttime frames proved difficult to categorize, especially during low visibility settings. We acknowledge this limitation likely introduced noise and uncertainty that may have affected both the model training and evaluation. Future work should invest more time and resources to uphold the integrity of the dataset, such as refining labeling guidelines or using confidence-based annotations. 
 
 This study primarily investigates the discriminative ability of a classification model to distinguish between Normal and Abnormal frames. While we extract feature embeddings using a \ac{ViT}-Base encoder, the semantic structure of the resulting lower-dimensional feature space is not explicitly analyzed. An interesting extension of this work would be to examine how environmental factors such as illumination, time of day, season, and weather conditions are encoded within the embedding space. Such analyses could provide deeper insight into how the model represents complex visual and environmental patterns, enhancing interpretability and robustness. To further improve interpretability and operational value, future work could also explore multi-level classification or continuous severity scoring to capture varying levels of image quality issues. 
 
