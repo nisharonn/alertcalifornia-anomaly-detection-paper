@@ -76,7 +76,7 @@ In many domains, anomaly detection systems are designed with a clear expectation
 
 Across these domains, an emerging theme in image-based anomaly detection is feature projection. An image with hundreds of pixels per side can be represented as a vector that contains tens of thousands of pixel values. Feature projection transforms this large representation into a smaller set that summarizes only the most important visual patterns. In this lower-dimensional latent space, class labels are then more easily distinguishable through the extraction of key features \cite{olszewski2024dimensionality, sakurada2014anomaly, zong2018deep}. Rather than dealing with the complexities of the original pixel space, feature projection approaches rely on representation learning models to capture underlying data structures in an embedding space. Two dominant methods emerge from this: reconstruction-based projection, which identifies anomalies from reconstruction errors in the latent space, and discriminative projection, which detects anomalies as deviations from learned feature embeddings \cite{mishra2021vt}.
 
-In reconstruction-based frameworks, autoencoders have been widely used for unsupervised anomaly detection due to their ability to learn compact representations of normal data without requiring labels \cite{cheng2021improved, sakurada2014anomaly, ustek2024deep}. When trained only on normal data, they learn to reproduce standard patterns with high accuracy while producing inflated reconstruction errors on unseen inputs. \Ac{GANs} further extend this idea by training two models: a generator that learns to produce realistic images from latent representations and a discriminator that distinguishes real and generated samples \cite{Walczyna2025, xia2022gan}. Like autoencoders, \ac{GANs} learn a detailed representation of the normal data distribution, and identify anomalies through high reconstruction error or low discriminator confidence. Although autoencoders and GAN-based models have both dominated unsupervised anomaly detection, each has limitations that prevent them from outperforming state-of-the-art models. For one, \ac{GANs} may fail to converge reliably, and are often time-consuming for anomaly detection tasks \cite{chen2022effectively}. Autoencoders, on the other hand, typically achieve enhanced performance when integrated with other deep learning models, such as \ac{CNNs} or \ac{ViT}s, rather than being used independently \cite{choi2022viv, lee2022anovit, yang2024unsupervised}.
+In reconstruction-based frameworks, autoencoders have been widely used for unsupervised anomaly detection due to their ability to learn compact representations of normal data without requiring labels \cite{cheng2021improved, sakurada2014anomaly, ustek2024deep}. When trained only on normal data, they learn to reproduce standard patterns with high accuracy while producing inflated reconstruction errors on unseen inputs. \Ac{GANs} further extend this idea by training two models: a generator that learns to produce realistic images from latent representations and a discriminator that distinguishes real and generated samples \cite{Walczyna2025, xia2022gan}. Like autoencoders, \ac{GANs} learn a detailed representation of the normal data distribution, and identify anomalies through high reconstruction error or low discriminator confidence. Although autoencoders and GAN-based models have both dominated unsupervised anomaly detection, each has limitations that prevent them from outperforming state-of-the-art models. For one, \ac{GANs} may fail to converge reliably and are often time-consuming for anomaly detection tasks \cite{chen2022effectively}. Autoencoders, on the other hand, typically achieve enhanced performance when integrated with other deep learning models, such as \ac{CNNs} or \ac{ViT}s, rather than being used independently \cite{choi2022viv, lee2022anovit, yang2024unsupervised}.
 
 The second major paradigm in feature projection is discriminative embedding learning. Unlike reconstruction-based methods that are image-based, this method emphasizes features in the latent space. The goal is to detect anomalies using learned and potentially meaningful semantic representations. Many recent works adopt architectures based on \ac{CNNs} for this purpose \cite{jain2024anomaly, minhas2019anomaly, zhou2016spatial}. In these frameworks, \ac{CNNs} serve as feature extractors, projecting normal images into a tightly clustered embedding space, whereas anomalous samples appear as outliers using distance-based or one-class classification criteria. Some of the main advantages of \ac{CNNs} include equivalent representations, sparse interactions, and parameter sharing \cite{alzubaidi2021review}. These properties have made \ac{CNN}-based architectures a dominant approach, and numerous studies have demonstrated the effectiveness of transfer learning to enhance results for domains with limited labeled data. For example, Minhas and Zelek leveraged features learned from normal images to perform image-based anomaly detection on three datasets: CIFAR10\footnote{\url{https://cave.cs.toronto.edu/kriz/cifar.html}}, MNIST\footnote{\url{http://yann.lecun.com/exdb/mnist/}}, and Concrete Crack\footnote{\url{https://data.mendeley.com/datasets/5y9wdsg2zt/1}}, suggesting that pretrained feature representations can generalize across diverse visual domains \cite{minhas2019anomaly}. Yet, despite promising results, \ac{CNNs}’ inherent focus on local information may overlook spatially distributed or subtle irregularities across the entire image region, a characteristic feature of common \ac{QoS} anomalies. For example, accumulated debris spanning a large portion of the camera frame or cloud cover across entire mountain ranges. 
 
@@ -84,7 +84,7 @@ More recently, \ac{ViT}s have emerged as a powerful framework for image-based an
 
 State-of-the-art methods also do not fully align with or exploit the specific characteristics of outdoor \ac{QoS} anomaly detection systems. In particular, many existing works adopt a semi-supervised or unsupervised approach due to the typically imbalanced ratio of normal to anomalous occurrences. However, in environmental monitoring systems, \ac{QoS} anomalies such as persistent debris, recurring solar glare, or nightly fog coverage all occur with greater regularity. These create more balanced datasets that are better suited for manual annotations. It also introduces an opportunity to adopt a fully supervised framework that explicitly learns representations of image quality. 
 
-Capitalizing on this structure, we leverage a fully supervised \ac{ViT} architecture that learns latent embeddings optimized for \ac{QoS} anomaly prediction. Our framework explicitly separates representation learning from classification using two components: a \ac{ViT}-Base encoder that maps input images to latent-space embeddings, and a lightweight \ac{MLP} head that directly predicts the presence of anomalies on those embeddings. To enforce separability in the embedding space, we adopt the triplet margin loss function, which enables discrimination across diverse environmental conditions by optimizing relative distances between samples. This loss function has demonstrated success in similar representation learning tasks such as face recognition \cite{Schroff_2015_CVPR}. We evaluate the proposed framework on unseen camera locations, achieving an average balanced accuracy of 82.88\% and an average \ac{AUC} of BLANK. These results establish a strong baseline for \ac{QoS} anomaly detection in large-scale environmental monitoring systems. 
+Capitalizing on this structure, we leverage a fully supervised \ac{ViT} architecture that learns latent embeddings optimized for \ac{QoS} anomaly prediction. Our framework explicitly separates representation learning from classification using two components: a \ac{ViT}-Base encoder that maps input images to latent-space embeddings, and a lightweight \ac{MLP} head that directly predicts the presence of anomalies on those embeddings. To enforce separability in the embedding space, we adopt the triplet margin loss function, which enables discrimination across diverse environmental conditions by optimizing relative distances between samples. This loss function has demonstrated success in similar representation learning tasks such as face recognition \cite{Schroff_2015_CVPR}. We evaluate the proposed framework on unseen camera locations, achieving an average balanced accuracy of 82.88\% and an average \ac{AUPRC} of 0.8054. These results establish a strong baseline for \ac{QoS} anomaly detection in large-scale environmental monitoring systems. 
 
 \section{Materials and Methods}
 
@@ -281,7 +281,7 @@ In our objective selection process, we train and evaluate each baseline model on
 \begin{table}[h!]
 \centering
 
-\caption{Training and validation accuracies for each baseline model.}
+\caption{Training and validation accuracies for each baseline model. The average mean training accuracy is calculated across 5 seeds, each with four folds.}
 \label{tab:train_val_accs}
 
 \begin{tabular}{lccc}
@@ -296,17 +296,16 @@ Average validation SD & 0.0105 & 0.0177 & 0.0300 \\
 
 \bottomrule
 \end{tabular}
-\caption{The average mean training accuracy is calculated across 5 seeds, each with four folds. 
 
 \end{table}
 
 \subsection{Final Multi-Camera Model}
 
-We adopt triplet loss in our final model architecture due to its superior performance in baseline evaluations. The final multi-camera model is trained on data from Coronado Hills, Palomar Observatory, and Mesa Grande. We further assess intra-dataset performance by evaluating the model on a held-out test set which includes unseen samples from these three locations. Because the distribution of Normal and Abnormal frames is imbalanced, we report the balanced accuracy in addition to standard classification metrics. Table~\ref{tab:train_test_accs} presents the results. 
+We adopt triplet loss in our final model architecture due to its superior performance in baseline evaluations. The final multi-camera model is trained on data from Coronado Hills, Palomar Observatory, and Mesa Grande. We further assess intra-dataset performance by evaluating the model on a held-out test set that includes unseen samples from these three locations. Because the distribution of camera frames is imbalanced and skewed towards Normal, we report the balanced accuracy in addition to standard classification metrics. Table~\ref{tab:train_test_accs} presents the results. 
 \begin{table}[h!]
 \centering
 
-\caption{Training and held-out test performance of the final model across camera locations.}
+\caption{Final model performance on training and held-out test.}
 \label{tab:train_test_accs}
 
 \begin{tabular}{lcccc}
@@ -314,10 +313,10 @@ We adopt triplet loss in our final model architecture due to its superior perfor
 \textbf{Metric} & Coronado Hills & Mesa Grande & Palomar Observatory$^{*}$  & Average  \\
 \midrule
 
-Training accuracy & 0.9965 & 0.9930 & 0.9983 & 0.9960 \\
-Test accuracy     & 0.9287 & 0.9431 & 0.9019 & 0.9244 \\
-Test recall       & 0.8295 & 0.7193 & 0.6207 & 0.7389 \\
-Test precision    & 0.8202 & 0.8542 & 0.6545 & 0.7812 \\
+Training balanced accuracy & 0.9980 & 1.0000 & 0.9959 & 0.9980 \\
+Test balanced accuracy    & 0.9183 & 0.9530 & 0.9276 & 0.9329 \\
+Test recall       & 0.8505 & 0.9091 & 0.8765 & 0.8787 \\
+Test precision    & 0.9479 & 0.9836 & 0.9103 & 0.9472 \\
 
 \bottomrule
 \end{tabular}
@@ -346,7 +345,7 @@ We test generalization beyond the training distribution by evaluating on three n
 \begin{table}[h]
 \centering
 
-\caption{Classification results on unseen camera test set.}
+\caption{Performance on unseen camera test set.}
 \label{tab:camera_accuracies}
 
 \begin{tabular}{lcccc}
@@ -367,7 +366,7 @@ $^{*}$Seasonal camera locations.
 
 \end{table}
 
-To further assess the model’s performance independent of a specific decision threshold, we generate \ac{ROC} curves and the corresponding \ac{AUC} for each camera location in Figure~\ref{fig:roc_curves}. These curves characterize the tradeoff between true positive and false positive rates, providing additional insight into the model’s ability to distinguish between Normal and Abnormal frames. 
+To further assess the model’s performance independent of a specific decision threshold, we generate \ac{PRC} curves and the corresponding \ac{AUPRC} for each camera location in Figure~\ref{fig:roc_curves}. These curves characterize the tradeoff between precision and recall across all possible decision thresholds, providing additional insight into the model’s ability to distinguish with an imbalanced dataset. 
 
 \begin{figure}[H]
     \centering
@@ -375,13 +374,13 @@ To further assess the model’s performance independent of a specific decision t
     % ================= Row 1 =================
     \begin{subfigure}{0.48\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{figures/coronado_hills_roc.png}
+        \includegraphics[width=\linewidth]{figures/coronado_hills_prc.png}
         \caption{Coronado Hills}
     \end{subfigure}
     \hfill
     \begin{subfigure}{0.48\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{figures/mesa_grande_roc.png}
+        \includegraphics[width=\linewidth]{figures/mesa_grande_prc.png}
         \caption{Mesa Grande}
     \end{subfigure}
 
@@ -390,13 +389,13 @@ To further assess the model’s performance independent of a specific decision t
     % ================= Row 2 =================
     \begin{subfigure}{0.48\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{figures/palomar_roc.png}
+        \includegraphics[width=\linewidth]{figures/palomar_prc.png}
         \caption{Palomar Observatory}
     \end{subfigure}
     \hfill
     \begin{subfigure}{0.48\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{figures/berryessa_roc.png}
+        \includegraphics[width=\linewidth]{figures/berryessa_prc.png}
         \caption{Berryessa}
     \end{subfigure}
 
@@ -405,17 +404,17 @@ To further assess the model’s performance independent of a specific decision t
     % ================= Row 3 =================
     \begin{subfigure}{0.48\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{figures/dewdrop_roc.png}
+        \includegraphics[width=\linewidth]{figures/dewdrop_prc.png}
         \caption{Dew Drop}
     \end{subfigure}
     \hfill
     \begin{subfigure}{0.48\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{figures/toropeak_roc.png}
+        \includegraphics[width=\linewidth]{figures/toropeak_prc.png}
         \caption{Toro Peak}
     \end{subfigure}
 
-    \caption{\ac{ROC} curves across all camera locations for held-out (a-c) and unseen (d-f) cameras test set.}
+    \caption{Precision-recall curves and \ac{AUPRC} across all camera locations for held-out (a-c) and unseen (d-f) cameras test set.}
     \label{fig:roc_curves}
 \end{figure}
 
@@ -427,18 +426,14 @@ The results demonstrate that embedding-based anomaly detection can effectively i
 Across the cross-validation folds, triplet loss achieves the highest validation accuracy ($92.60 \pm 1.05\%$), followed by \ac{DeepSAD} ($90.94 \pm 1.77\%$) and \ac{H-SAD} ($69.03 \pm 3.00\%$). It also demonstrates the most consistent results, with the lowest standard deviations across all training and validation tests. Interestingly, both triplet loss and \ac{DeepSAD} achieve accuracies in the $90\%$ range while \ac{H-SAD} is the only objective function failing to meet that threshold. The large gap between \ac{H-SAD} and its alternatives likely reflects differences in label structure, in which the former is trained using a 4-point severity scale while the latter are trained using binary Normal/Abnormal labels. As such, learning more levels requires capturing more nuanced ordinal distinctions in image quality degradation, which can make the classification task inherently more difficult. 
 
 \subsection{Final Multi-Camera Model}
-The final multi-camera model trained with triplet loss demonstrates relatively strong performance across all three camera locations in its training set. Table~\ref{tab:train_test_accs} shows held-out test set accuracies above $90\%$ for both seasonal and non-seasonal cameras, indicating that the model generalizes effectively to unseen environmental variations present in the training distribution. Among these locations, Coronado Hills achieves the highest overall performance and is the only site where recall exceeds precision. This suggests that the model is particularly effective at identifying a larger proportion of \ac{QoS} anomalies at this location. The tradeoff, however, is a greater number of false positives. 
-
-In contrast, Mesa Grande and Palomar Observatory exhibit higher precision than recall, indicating that anomaly prediction at these locations is more accurate, though some anomalous events remain undetected. This trend is especially pronounced at Palomar Observatory, where precision is highest among the three sites. Overall, precision exceeds recall, suggesting that the model adopts a more conservative strategy at these locations, favoring fewer false alarms at the expense of missing some \ac{QoS} anomalies. 
-
-This variation in model behavior across camera locations indicates that even within the training distribution, performance is influenced by location-specific visual characteristics. Nonetheless, the consistently high accuracy across all three locations demonstrates that the model remains robust to moderate environmental and seasonal variability. 
+The final multi-camera model trained with triplet loss demonstrates relatively strong performance across all three camera locations in the training distribution. As shown in Table~\ref{tab:train_test_accs}, held-out balanced accuracies exceed 90% at every location, indicating that the model generalizes effectively to previously unseen samples drawn from familiar environmental conditions. Across all three cameras, precision consistently exceeds recall, suggesting that the model adopts a more conservative approach that favors detection accuracy over missed events. Although this strategy results in some missed \ac{QoS} anomalies, it also reduces the number of false alarms. 
 
 \subsection{Generalization Across Camera Locations}
 % The embedding projection onto the shared latent space defined by PC1 and PC2 reveals that all camera locations occupy overlapping regions, though with varying degrees of dispersion (Figure~\ref{fig:final_pc_proj}). While some location-dependent spread is observed, there appears to be no distinct clusters corresponding to individual cameras. This suggests that the dominant variation captured by the learned representations is not solely driven by camera identity. This behavior is encouraging for generalization, as the absence of camera-specific outliers indicates that embeddings learned from different locations largely share a feature space. 
 
-For unseen cameras, classification accuracies reported in Table~\ref{tab:camera_accuracies} indicate an average balanced accuracy of 82.88\%. However, accuracy alone does not fully capture model performance, and in this setting, it hides a significant tradeoff between precision and recall. In particular, across all unseen locations, the model achieves a high average recall of 92.72\% but a considerably lower precision of 45.60\%, suggesting a tendency to over-predict \ac{QoS} anomalies. As a result, the model successfully identifies most of the anomalous frames at the expense of more false positives. This behavior reflects a sensitivity-focused approach that prioritizes detection coverage over minimizing false alarms. In the context of environmental monitoring, however, this tradeoff may be acceptable, as the consequence of missing a \ac{QoS} event can be greater than the cost of reviewing a false alarm. 
+For unseen cameras, classification accuracies reported in Table~\ref{tab:camera_accuracies} indicate an average balanced accuracy of 82.88\%. However, accuracy alone does not fully capture model performance, and in this setting, it hides a significant tradeoff between precision and recall. In particular, across all unseen locations, the model achieves a high average recall of 92.72\% but a considerably lower precision of 45.60\%, suggesting a tendency to over-predict \ac{QoS} anomalies. As a result, the model successfully identifies most of the anomalous frames at the expense of more false positives. This behavior is opposite to that observed in the training distribution and indicates that the model becomes less conservative when presented with new camera locations. Instead, the model shifts to adopt a sensitivity-focused approach that prioritizes detection coverage over minimizing false alarms. In the context of environmental monitoring, however, this tradeoff may be acceptable, as the consequence of missing a \ac{QoS} event can be greater than the cost of reviewing a false alarm. 
 
-Despite the reduction in precision, Figure~\ref{fig:roc_curves} shows that all camera locations achieve \ac{AUC} values above 0.93. These results indicate that the model has strong discriminative ability that effectively separates Normal and Abnormal frames. The discrepancy between the high \ac{AUC} values and lower precision suggests that classification accuracy may be more sensitive to the selected decision threshold, and that the model’s anomalous discrimination remains reliable. 
+Despite the reduction in precision, Figure~\ref{fig:roc_curves} shows that all camera locations achieve \ac{AUPRC} values above 0.68, substantially exceeding their positive-class baselines of 0.1462 to 0.2129. These results indicate that the model effectively separates Abnormal frames from Normal frames, even under class imbalance. The discrepancy between the \ac{AUPRC} values and lower precision suggests that classification accuracies may be more sensitive to the selected decision threshold, and that the model’s anomalous discrimination remains reliable. Current results reflect a default decision threshold that favors recall over precision, rather than an inability to distinguish between normal and anomalous frames. 
 
 Performance also varies across individual camera locations within the unseen dataset. Interestingly, Dew Drop and Toro Peak, both identified as seasonal cameras, outperform Berryessa, a location that does not observe significant seasonal variability. Dew Drop and Toro Peak achieve balanced accuracies of 90.61% and 83.73%, respectively, compared to Berryessa's 74.31%. These results suggest that rather than seasonal factors, the model’s ability to generalize is more heavily influenced by other environmental characteristics. In particular, Toro Peak, which is located in Southern California and shares visual characteristics with the training distribution, achieves the highest balanced accuracy and precision among the three unseen locations. Unlike Berryessa and Dew Drop, it does not exhibit the pronounced imbalance between precision and recall, indicating a more stable tradeoff between false positives and false negatives. Overall, these results suggest that the model generalizes more effectively to camera locations whose visual characteristics resemble those seen in training. 
 
@@ -492,7 +487,7 @@ This study primarily investigates the discriminative ability of a classification
 
 \section{Conclusion}
 
-We present a \ac{ViT}-based framework for detecting \ac{QoS} anomalies in ALERTCalifornia wildfire monitoring cameras. By pairing a \ac{ViT}-Base encoder with a lightweight classifier and a custom labeling scheme, we demonstrate the effectiveness of a supervised embedding-based approach for automated camera quality monitoring. The final multi-camera model generalizes moderately well to unseen camera locations, with an average balanced accuracy of $82.88\%$ and \ac{AUC}s above BLANK. These results are hopeful in the context of environmental monitoring, as the high \ac{AUC} indicates strong discriminative ability across thresholds.
+We present a \ac{ViT}-based framework for detecting \ac{QoS} anomalies in ALERTCalifornia wildfire monitoring cameras. By pairing a \ac{ViT}-Base encoder with a lightweight classifier and a custom labeling scheme, we demonstrate the effectiveness of a supervised embedding-based approach for automated camera quality monitoring. The final multi-camera model generalizes moderately well to unseen camera locations, with an average balanced accuracy of $82.88\%$ and an average \ac{AUPRC} of 0.8054. These results are hopeful in the context of environmental monitoring, as the \ac{AUPRC} indicates strong discriminative ability across thresholds.
 
 Our findings suggest that a supervised \ac{ViT}-Base framework provides a promising foundation for automated image quality assessment, but additional work is necessary to support scalability across a network as large as ALERTCalifornia’s. In particular, current generalization and scalability evaluations are limited, and further testing is required to assess model performance across a broader range of environmental conditions and geographic landscapes. Future efforts should aim to evaluate performance across a larger subset of the camera network and investigate methods for reducing false positives while maintaining the high recall observed in this work. 
 
@@ -545,7 +540,7 @@ In our implementation, we train on \textit{all} triplets (those with Normal anch
 \begin{figure}[h!]
     \centering
     \includegraphics[width=0.6\linewidth]{figures/tml.png}
-    \caption{A diagram showing how the embeddings of different types of negative points exist in feature space during computation of triplet margin loss. Easy negatives’ embeddings lie outside the margin $\alpha$; they already satisfy the triplet constraint. In contrast, hard negatives’ embeddings lie inside the margin. There are two sub-types: semi-hard negatives, whose embeddings lie further away from the anchor’s than the positive point’s, and very hard negatives, whose embeddings lie closer to the anchor’s than the positive point’s.}
+    \caption{A diagram showing how the embeddings of different types of negative points exist in feature space during computation of triplet margin loss. Easy negatives’ embeddings lie outside the margin $\alpha$; they already satisfy the triplet constraint. In contrast, hard negatives’ embeddings lie inside the margin. There are two subtypes: semi-hard negatives, whose embeddings lie further away from the anchor’s than the positive point’s, and very hard negatives, whose embeddings lie closer to the anchor’s than the positive point’s.}
     \label{fig:tml}
 \end{figure}
 
@@ -612,8 +607,8 @@ The final term is a weight regularization term, whose influence is controlled by
 \begin{acronym}
   \acro{QoS}{quality of service}
   \acro{CNNs}{convolutional neural networks}
-  \acro{GANs}{generative Adversarial Networks}
-  \acro{AUC}{area under the curve}
+  \acro{GANs}{generative adversarial networks}
+  \acro{AUPRC}{area under the precision-recall curve}
   \acro{ViT}{vision transformer}
   \acro{PCA}{principal component analysis}
   \acro{PC}{principal component}
@@ -621,9 +616,12 @@ The final term is a weight regularization term, whose influence is controlled by
   \acro{GPU}{graphics processing unit}
   \acro{ORR}{operationally relevant region}
   \acro{SD}{standard deviation}
-  \acro{ROC}{receiver operating characteristic}
-  \acro{DeepSAD}{Deep Semi-supervised Anomaly Detection}
-  \acro{H-SAD}{Hierarchical Semi-supervised Anomaly Detection}
+  \acro{PRC}{precision-recall curve}
+  \acro{DeepSAD}{deep semi-supervised anomaly detection}
+  \acro{H-SAD}{hierarchical semi-supervised anomaly detection}
 \end{acronym}
 
 \end{document}
+
+
+
