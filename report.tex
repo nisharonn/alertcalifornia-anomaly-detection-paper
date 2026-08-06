@@ -281,7 +281,7 @@ In our objective selection process, we train and evaluate each baseline model on
 \begin{table}[h!]
 \centering
 
-\caption{Training and validation accuracies for each baseline model. The average mean training accuracy is calculated across 5 seeds, each with four folds.}
+\caption{Training and validation accuracies for each baseline model. The average training accuracy is calculated across 5 seeds, each with four folds.}
 \label{tab:train_val_accs}
 
 \begin{tabular}{lccc}
@@ -414,7 +414,7 @@ To further assess the model’s performance independent of a specific decision t
         \caption{Toro Peak}
     \end{subfigure}
 
-    \caption{Precision-recall curves and \ac{AUPRC} across all camera locations for held-out (a-c) and unseen (d-f) cameras test set.}
+    \caption{Precision-recall curves and \ac{AUPRC} across all camera locations for held-out (a-c) and unseen (d-f) camera test sets.}
     \label{fig:roc_curves}
 \end{figure}
 
@@ -498,7 +498,7 @@ In a practical deployment setting, the proposed framework could be integrated in
 \appendix
 \section{Triplet Margin Loss}
 \label{app:marginloss}
-The triplet margin loss is a function that aims to bring points of similar classes closer together, while pushing dissimilar points further away \cite{Schroff_2015_CVPR}. First, a dataset of triplets of the form ($A, P, N$) is computed, where A is an anchor point, P is a positive point (of the same class as A), and N is a negative point (of a different class from A). Generally, the loss is computed on a function $f(x)$ which maps a point $x$ to a finite-dimensional Euclidean space in order to optimize it. In our case, each “point” is an input image, each of which is represented as a tensor of size 224 x 224 x 3. The anchor point A can belong to either the Normal or Abnormal class in our case. If A is Normal, then the positive point P will also be some Normal point, while N will be some Abnormal point. Conversely, if A is Abnormal, then P will also be Abnormal, while N will be Normal. The function $f(x)$ which we compute the loss on is our baseline encoder model, which maps these images into vectors f(A), f(P), and f(N), each of which exists in $\mathbb{R}^{768}$. We refer to these vectors as the embeddings of A, P, and N, respectively. Formally, we express this setup as follows:
+The triplet margin loss is a function that aims to bring points of similar classes closer together, while pushing dissimilar points further away \cite{Schroff_2015_CVPR}. First, a dataset of triplets of the form ($A, P, N$) is computed, where A is an anchor point, P is a positive point (of the same class as A), and N is a negative point (of a different class from A). Generally, the loss is computed on a function $f(x)$ which maps a point $x$ to a finite-dimensional Euclidean space in order to optimize it. In our case, each “point” is an input image, each of which is represented as a tensor of size 224 x 224 x 3. The anchor point A can belong to either the Normal or Abnormal class in our case. If A is Normal, then the positive point P will also be some Normal point, while N will be some Abnormal point. Conversely, if A is Abnormal, then P will also be Abnormal, while N will be Normal. The function $f(x)$ on which we compute the loss is our baseline encoder model, which maps these images into vectors f(A), f(P), and f(N), each of which exists in $\mathbb{R}^{768}$. We refer to these vectors as the embeddings of A, P, and N, respectively. Formally, we express this setup as follows:
 
 \[
 \mathcal{D} = \{(A_i, P_i, N_i)\}_{i=1}^m,\qquad
@@ -573,7 +573,7 @@ For computation, we convert our labels to numeric values as follows:
 \item Points with a label of Severe Anomaly receive a numeric label of 4.
 \end{itemize}
 
-Suppose we have a neural network $\phi(\cdot;\mathcal{W}) : \mathcal{X} \rightarrow \mathcal{Z}$ which maps data from an input space $\mathcal{X} \subseteq \mathbb{R}^D$ to an output space $\mathcal{Z} \subseteq \mathbb{R}^d$. This network contains $K$ hidden layers, with a corresponding set of weights $\mathcal{W} = \{W^1, W^2, ..., W^K\}$. Additionally, suppose we have some dataset $X = \{x_1, x_2, ..., x_{n+m}\}$, which contains both labeled and unlabeled data. We define the subset $L \subset X = \left\{(\tilde{x}_j, y_j) | \tilde{x}_j \in X, y_j \in \{1, 2,3, 4\}\right\}_{j=1}^{m}$, which contains only labeled data. We also define the subset $U \subset X = \{x_i\}_{i=1}^{n}$ which contains only unlabeled data. We create a binary classifier on the ground-truth labels:
+Suppose we have a neural network $\phi(\cdot;\mathcal{W}): \mathcal{X} \rightarrow \mathcal{Z}$ which maps data from an input space $\mathcal{X} \subseteq \mathbb{R}^D$ to an output space $\mathcal{Z} \subseteq \mathbb{R}^d$. This network contains $K$ hidden layers, with a corresponding set of weights $\mathcal{W} = \{W^1, W^2, ..., W^K\}$. Additionally, suppose we have some dataset $X = \{x_1, x_2, ..., x_{n+m}\}$, which contains both labeled and unlabeled data. We define the subset $L \subset X = \left\{(\tilde{x}_j, y_j) | \tilde{x}_j \in X, y_j \in \{1, 2,3, 4\}\right\}_{j=1}^{m}$, which contains only labeled data. We also define the subset $U \subset X = \{x_i\}_{i=1}^{n}$ which contains only unlabeled data. We create a binary classifier on the ground-truth labels:
 \[b(y_i) = \begin{cases}
     1 & \text{if } y \in \{1,2\} \\
     -1 & \text{if } y \notin \{1,2\}
