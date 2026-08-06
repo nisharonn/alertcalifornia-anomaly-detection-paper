@@ -281,7 +281,7 @@ In our objective selection process, we train and evaluate each baseline model on
 \begin{table}[h!]
 \centering
 
-\caption{Training and validation accuracies for each baseline model. The average training accuracy is calculated across 5 seeds, each with four folds.}
+\caption{Training and validation accuracies for each baseline model. The average mean training accuracy is calculated across 5 seeds, each with four folds.}
 \label{tab:train_val_accs}
 
 \begin{tabular}{lccc}
@@ -311,7 +311,7 @@ We adopt triplet loss in our final model architecture due to its superior perfor
 \begin{tabular}{lcccc}
 \toprule
 \textbf{Metric} & Coronado Hills & Mesa Grande & Palomar Observatory$^{*}$  & Average  \\
-\midrule 
+\midrule
 
 Training balanced accuracy & 0.9980 & 1.0000 & 0.9959 & 0.9980 \\
 Test balanced accuracy    & 0.9183 & 0.9530 & 0.9276 & 0.9329 \\
@@ -426,7 +426,7 @@ The results demonstrate that embedding-based anomaly detection can effectively i
 Across the cross-validation folds, triplet loss achieves the highest validation accuracy ($92.60 \pm 1.05\%$), followed by \ac{DeepSAD} ($90.94 \pm 1.77\%$) and \ac{H-SAD} ($69.03 \pm 3.00\%$). It also demonstrates the most consistent results, with the lowest standard deviations across all training and validation tests. Interestingly, both triplet loss and \ac{DeepSAD} achieve accuracies in the $90\%$ range while \ac{H-SAD} is the only objective function failing to meet that threshold. The large gap between \ac{H-SAD} and its alternatives likely reflects differences in label structure, in which the former is trained using a 4-point severity scale while the latter are trained using binary Normal/Abnormal labels. As such, learning more levels requires capturing more nuanced ordinal distinctions in image quality degradation, which can make the classification task inherently more difficult. 
 
 \subsection{Final Multi-Camera Model}
-The final multi-camera model trained with triplet loss demonstrates relatively strong performance across all three camera locations in the training distribution. As shown in Table~\ref{tab:train_test_accs}, held-out balanced accuracies exceed 90% at every location, indicating that the model generalizes effectively to previously unseen samples drawn from familiar environmental conditions. Across all three cameras, precision consistently exceeds recall, suggesting that the model adopts a more conservative approach that favors detection accuracy over missed events. Although this strategy results in some missed \ac{QoS} anomalies, it also reduces the number of false alarms. 
+The final multi-camera model trained with triplet loss demonstrates relatively strong performance across all three camera locations in the training distribution. As shown in Table~\ref{tab:train_test_accs}, held-out balanced accuracies exceed 90\% at every location, indicating that the model generalizes effectively to previously unseen samples drawn from familiar environmental conditions. Across all three cameras, precision consistently exceeds recall, suggesting that the model adopts a more conservative approach that favors detection accuracy over missed events. Although this strategy results in some missed \ac{QoS} anomalies, it also reduces the number of false alarms. 
 
 \subsection{Generalization Across Camera Locations}
 % The embedding projection onto the shared latent space defined by PC1 and PC2 reveals that all camera locations occupy overlapping regions, though with varying degrees of dispersion (Figure~\ref{fig:final_pc_proj}). While some location-dependent spread is observed, there appears to be no distinct clusters corresponding to individual cameras. This suggests that the dominant variation captured by the learned representations is not solely driven by camera identity. This behavior is encouraging for generalization, as the absence of camera-specific outliers indicates that embeddings learned from different locations largely share a feature space. 
@@ -435,7 +435,7 @@ For unseen cameras, classification accuracies reported in Table~\ref{tab:camera_
 
 Despite the reduction in precision, Figure~\ref{fig:roc_curves} shows that all camera locations achieve \ac{AUPRC} values above 0.68, substantially exceeding their positive-class baselines of 0.1462 to 0.2129. These results indicate that the model effectively separates Abnormal frames from Normal frames, even under class imbalance. The discrepancy between the \ac{AUPRC} values and lower precision suggests that classification accuracies may be more sensitive to the selected decision threshold, and that the model’s anomalous discrimination remains reliable. Current results reflect a default decision threshold that favors recall over precision, rather than an inability to distinguish between normal and anomalous frames. 
 
-Performance also varies across individual camera locations within the unseen dataset. Interestingly, Dew Drop and Toro Peak, both identified as seasonal cameras, outperform Berryessa, a location that does not observe significant seasonal variability. Dew Drop and Toro Peak achieve balanced accuracies of 90.61% and 83.73%, respectively, compared to Berryessa's 74.31%. These results suggest that rather than seasonal factors, the model’s ability to generalize is more heavily influenced by other environmental characteristics. In particular, Toro Peak, which is located in Southern California and shares visual characteristics with the training distribution, achieves the highest balanced accuracy and precision among the three unseen locations. Unlike Berryessa and Dew Drop, it does not exhibit the pronounced imbalance between precision and recall, indicating a more stable tradeoff between false positives and false negatives. Overall, these results suggest that the model generalizes more effectively to camera locations whose visual characteristics resemble those seen in training. 
+Performance also varies across individual camera locations within the unseen dataset. Interestingly, Dew Drop and Toro Peak, both identified as seasonal cameras, outperform Berryessa, a location that does not observe significant seasonal variability. Dew Drop and Toro Peak achieve balanced accuracies of 90.61\% and 83.73\%, respectively, compared to Berryessa's 74.31\%. These results suggest that rather than seasonal factors, the model’s ability to generalize is more heavily influenced by other environmental characteristics. In particular, Toro Peak, which is located in Southern California and shares visual characteristics with the training distribution, achieves the highest balanced accuracy and precision among the three unseen locations. Unlike Berryessa and Dew Drop, it does not exhibit the pronounced imbalance between precision and recall, indicating a more stable tradeoff between false positives and false negatives. Overall, these results suggest that the model generalizes more effectively to camera locations whose visual characteristics resemble those seen in training. 
 
 This trend becomes even more apparent when examining false positive frames from the unseen camera locations, as seen in Figure~\ref{fig:false_positives}. Unlike all other cameras, Berryessa contains a large body of water, which is a visual feature unique to its location. Especially during low light conditions, this water surface resembles a layer of cloud (see Figure~\ref{fig:false_positives}). We hypothesize that this feature likely explains the disproportionately large number of false positives, as it mirrors visual cues that the model associates with \ac{QoS} anomalies. These findings reinforce that the model is capable of generalizing across seasonal and environmental variation when the visual characteristics remain similar to those seen during training. However, performance declines when novel contexts are introduced. 
 
@@ -472,11 +472,11 @@ To quantify this uncertainty, we measure inter-rater agreement using Krippendorf
 
 \begin{tabular}{lc}
 \toprule
-\textbf{Metric} & \textbf{Value} \\
+\textbf{Krippendorff's $\alpha$} & \textbf{Value} \\
 \midrule
-Overall Krippendorff's $\alpha$ & 0.6939 \\
-Minimum $\alpha$ & 0.6601 \\
-Maximum $\alpha$ & 0.7645 \\
+Overall & 0.6939 \\
+Minimum & 0.6601 \\
+Maximum & 0.7645 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -606,6 +606,7 @@ The final term is a weight regularization term, whose influence is controlled by
 
 \begin{acronym}
   \acro{QoS}{quality of service}
+  \acro{CNN}{convolutional neural network}
   \acro{CNNs}{convolutional neural networks}
   \acro{GANs}{generative adversarial networks}
   \acro{AUPRC}{area under the precision-recall curve}
@@ -622,6 +623,4 @@ The final term is a weight regularization term, whose influence is controlled by
 \end{acronym}
 
 \end{document}
-
-
 
