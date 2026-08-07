@@ -385,6 +385,8 @@ For unseen cameras, classification accuracies reported in Table~\ref{tab:camera_
 
 Despite the reduction in precision, Figure~\ref{fig:roc_curves} shows that all camera locations achieve \ac{AUPRC} values above 0.68, substantially exceeding their positive-class baselines of 0.1462 to 0.2129. These results indicate that the model effectively separates Abnormal frames from Normal frames, even under class imbalance. The discrepancy between the \ac{AUPRC} values and lower precision suggests that classification accuracies may be more sensitive to the selected decision threshold, and that the model’s anomalous discrimination remains reliable. Current results reflect a default decision threshold that favors recall over precision, rather than an inability to distinguish between normal and anomalous frames. 
 
+Performance also varies across individual camera locations within the unseen dataset. Interestingly, Dew Drop and Toro Peak, both identified as seasonal cameras, outperform Berryessa, a location that does not observe significant seasonal variability. Dew Drop and Toro Peak achieve balanced accuracies of 90.61\% and 83.73\%, respectively, compared to Berryessa's 74.31\%. These results suggest that rather than seasonal factors, the model’s ability to generalize is more heavily influenced by other environmental characteristics. In particular, Toro Peak, which is located in Southern California and shares visual characteristics with the training distribution, achieves the highest balanced accuracy and precision among the three unseen locations. Unlike Berryessa and Dew Drop, it does not exhibit the pronounced imbalance between precision and recall, indicating a more stable tradeoff between false positives and false negatives. Overall, these results suggest that the model generalizes more effectively to camera locations whose visual characteristics resemble those seen in training. 
+
 \begin{figure}[H]
     \centering
 
@@ -435,8 +437,6 @@ Despite the reduction in precision, Figure~\ref{fig:roc_curves} shows that all c
     \label{fig:roc_curves}
 \end{figure}
 
-Performance also varies across individual camera locations within the unseen dataset. Interestingly, Dew Drop and Toro Peak, both identified as seasonal cameras, outperform Berryessa, a location that does not observe significant seasonal variability. Dew Drop and Toro Peak achieve balanced accuracies of 90.61\% and 83.73\%, respectively, compared to Berryessa's 74.31\%. These results suggest that rather than seasonal factors, the model’s ability to generalize is more heavily influenced by other environmental characteristics. In particular, Toro Peak, which is located in Southern California and shares visual characteristics with the training distribution, achieves the highest balanced accuracy and precision among the three unseen locations. Unlike Berryessa and Dew Drop, it does not exhibit the pronounced imbalance between precision and recall, indicating a more stable tradeoff between false positives and false negatives. Overall, these results suggest that the model generalizes more effectively to camera locations whose visual characteristics resemble those seen in training. 
-
 \subsection{Analysis of False Positive Frames}
 
 This trend becomes even more apparent when examining false positive frames from the unseen camera locations, as seen in Figure~\ref{fig:false_positives}. Unlike all other cameras, Berryessa contains a large body of water, which is a visual feature unique to its location. Especially during low light conditions, this water surface resembles a layer of cloud (see Figure~\ref{fig:false_positives}). We hypothesize that this feature likely explains the disproportionately large number of false positives, as it mirrors visual cues that the model associates with \ac{QoS} anomalies. These findings reinforce that the model is capable of generalizing across seasonal and environmental variation when the visual characteristics remain similar to those seen during training. However, performance declines when novel contexts are introduced. 
@@ -445,15 +445,14 @@ To better understand these performance differences, we further examine false pos
 
 Several nighttime frames at Toro Peak and Dew Drop exhibit significantly reduced visibility despite having no obvious ``obstruction”, as shown in Figure~\ref{fig:false_positives}. Rather than illustrating a clear binary distinction between Normal and Abnormal frames, these apparent false positives reveal that nighttime visibility exists along a spectrum. While some frames retain sufficient detail for reliable monitoring, others become difficult to interpret as illumination decreases. Under the current annotation rubric, however, there is no clear, objective threshold to define when reduced visibility is considered anomalous. Annotators may thus reasonably disagree on labeling decisions, highlighting the inherent challenge of defining image-quality degradations in low light conditions. Consequently, some apparent false positives may reflect uncertainty in ground-truth labels rather than model error. 
 
+Taken together, these findings highlight the complex and nuanced task of identifying \ac{QoS} anomalies. In particular, label uncertainties and true generalization limitations interact to influence model results. To achieve robust performance across the broader ALERTCalifornia network, both a diverse training set and rigorous labeling guidelines are required. The training set must capture variations in terrain, illumination, seasonal conditions, and anomaly types, while refined labeling guidelines should account for the subjective nature of image quality judgments through clearer, measurable thresholds for anomaly severity. 
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{figures/false_positives.png}
     \caption{A subset of false positive frames from each of the unseen camera locations.}
     \label{fig:false_positives}
 \end{figure}
-
-Taken together, these findings highlight the complex and nuanced task of identifying \ac{QoS} anomalies. In particular, label uncertainties and true generalization limitations interact to influence model results. To achieve robust performance across the broader ALERTCalifornia network, both a diverse training set and rigorous labeling guidelines are required. The training set must capture variations in terrain, illumination, seasonal conditions, and anomaly types, while refined labeling guidelines should account for the subjective nature of image quality judgments through clearer, measurable thresholds for anomaly severity. 
-
 
 \subsection{Limitations and Future Work}
 
