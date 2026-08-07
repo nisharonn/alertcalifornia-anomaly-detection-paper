@@ -95,7 +95,7 @@ We first investigate the effectiveness of different representation learning obje
 
 Our overall experimental design consists of four main components: (1) data collection and preprocessing, (2) label definition and annotation, (3) model training under multiple objective functions, and (4) evaluation and selection of a final multi-camera model. A high-level overview of the full pipeline is shown in Figure~\ref{fig:model_pipeline}.
 
-\begin{figure}[H]
+\begin{figure}[h!]
     \centering
     \includegraphics[width=0.85\linewidth]{figures/model_pipeline.png}
     \caption{Flowchart outlining the full training pipeline of the model, from baseline models to the final multi-camera model.}
@@ -106,7 +106,7 @@ Our overall experimental design consists of four main components: (1) data colle
 \label{sec:datacollection}
 
 We source the data from cameras in the ALERTCalifornia network. These cameras exhibit variations in weather conditions, lighting, and terrain (as seen in Figure~\ref{fig:level_examples}), making them suitable for training and testing the \Ac{QoS} anomaly detection model. To construct the labeled dataset, we extract still images from cameras over a one-year period: October 1, 2024, to September 30, 2025. We sample frames at a fixed hourly interval by selecting the image closest to the top of each hour. Because camera views may occasionally be adjusted by local emergency operators, we use pan, tilt, and zoom information from the external metadata to maintain visual consistency across the dataset. Specifically, we exclude frames whose values deviate from the camera-specific median by more than 4° in pan, 0.1° in tilt, or 0.1× in zoom. These thresholds are chosen to minimize scene variation across cameras during model training. Table~\ref{tab:frame_counts} describes the size of each dataset after filtering. 
-\begin{table}[H]
+\begin{table}[h!]
 \scriptsize
 \centering
 \begin{threeparttable}
@@ -177,7 +177,7 @@ To train our initial model, we focus on three cameras located in San Diego Count
 
 In the testing set, we introduce three additional cameras: Axis-ToroPeak1 \footnote{\url{https://cameras.alertcalifornia.org/?id=Axis-ToroPeak1}}, Axis-Dewdrop1 \footnote{\url{https://cameras.alertcalifornia.org/?id=Axis-Dewdrop1}}, and Axis-Berryessa \footnote{\url{https://cameras.alertcalifornia.org/?id=Axis-Berryessa}}, which we refer to as Toro Peak, Dew Drop, and Berryessa. In this set, Toro Peak and Dew Drop are seasonal cameras, while Berryessa does not show substantial change across seasons. We select Dew Drop and Berryessa, located in Amador and Yolo Counties in Northern California, to evaluate the model's ability to generalize across geographic regions. Toro Peak, also located in Southern California in Riverside County, is selected to assess seasonal effects in a similar area. This configuration allows us to evaluate model performance across both seasonal variability and geographic context. Example images from each location are shown in Figure~\ref{fig:level_examples}. 
 
-\begin{figure}[H]
+\begin{figure}[h!]
     \centering
     \includegraphics[width=1\linewidth]{figures/level_image_grid.png}
     \caption{Representative frames corresponding to each level of the 4-point ordinal scale across all six cameras. Camera locations ordered from top to bottom: Coronado Hills, Mesa Grande, Palomar Observatory, Toro Peak, Berryessa, Dew Drop.}
@@ -332,7 +332,7 @@ Training accuracy is near-perfect across all three locations, whereas test accur
 \subsection{Generalization Across Camera Locations}
 % To assess the model’s potential to generalize, we examine learned embeddings in the PC1 and PC2 space. Figure~\ref{fig:final_pc_proj} displays the projection, where each point corresponds to a single image in the dataset and is colored according to its associated camera location. The embeddings are computed from the final trained encoder and projected into two dimensions using \ac{PCA}. This visualization directly compares spatial representations across camera sites. 
 
-% \begin{figure}[H]
+% \begin{figure}[h!]
 %     \centering
 %     \includegraphics[width=0.85\linewidth]{figures/final_p1p2.png}
 %     \caption{PC1 vs. PC2 projection of the final model trained using triplet loss, colored by
@@ -342,7 +342,7 @@ Training accuracy is near-perfect across all three locations, whereas test accur
 
 We test generalization beyond the training distribution by evaluating on three new unseen datasets: Berryessa, Dew Drop, and Toro Peak. Table~\ref{tab:camera_accuracies} lists the balanced accuracy, precision, and recall values. 
 
-\begin{table}[h]
+\begin{table}[h!]
 \centering
 
 \caption{Performance on unseen camera test set.}
@@ -437,9 +437,10 @@ Despite the reduction in precision, Figure~\ref{fig:roc_curves} shows that all c
 
 Performance also varies across individual camera locations within the unseen dataset. Interestingly, Dew Drop and Toro Peak, both identified as seasonal cameras, outperform Berryessa, a location that does not observe significant seasonal variability. Dew Drop and Toro Peak achieve balanced accuracies of 90.61\% and 83.73\%, respectively, compared to Berryessa's 74.31\%. These results suggest that rather than seasonal factors, the model’s ability to generalize is more heavily influenced by other environmental characteristics. In particular, Toro Peak, which is located in Southern California and shares visual characteristics with the training distribution, achieves the highest balanced accuracy and precision among the three unseen locations. Unlike Berryessa and Dew Drop, it does not exhibit the pronounced imbalance between precision and recall, indicating a more stable tradeoff between false positives and false negatives. Overall, these results suggest that the model generalizes more effectively to camera locations whose visual characteristics resemble those seen in training. 
 
+\subsection{Analysis of False Positive Frames}
+
 This trend becomes even more apparent when examining false positive frames from the unseen camera locations, as seen in Figure~\ref{fig:false_positives}. Unlike all other cameras, Berryessa contains a large body of water, which is a visual feature unique to its location. Especially during low light conditions, this water surface resembles a layer of cloud (see Figure~\ref{fig:false_positives}). We hypothesize that this feature likely explains the disproportionately large number of false positives, as it mirrors visual cues that the model associates with \ac{QoS} anomalies. These findings reinforce that the model is capable of generalizing across seasonal and environmental variation when the visual characteristics remain similar to those seen during training. However, performance declines when novel contexts are introduced. 
 
-\subsection{Analysis of False Positive Frames}
 To better understand these performance differences, we further examine false positive frames from each unseen camera location. At Toro Peak, the location most visually similar to the training set, all predicted false positives occurred exclusively during nighttime conditions. At Dew Drop, this proportion is over two-thirds. In low light settings, terrain and landscape details become obscured, potentially making it more difficult for the model to differentiate between natural environmental characteristics and true \ac{QoS} anomalies. However, rather than clear model errors, closer inspection suggests that some of these cases may actually reflect ambiguity and inconsistencies in the labeling process. 
 
 Several nighttime frames at Toro Peak and Dew Drop exhibit significantly reduced visibility despite having no obvious ``obstruction”, as shown in Figure~\ref{fig:false_positives}. Rather than illustrating a clear binary distinction between Normal and Abnormal frames, these apparent false positives reveal that nighttime visibility exists along a spectrum. While some frames retain sufficient detail for reliable monitoring, others become difficult to interpret as illumination decreases. Under the current annotation rubric, however, there is no clear, objective threshold to define when reduced visibility is considered anomalous. Annotators may thus reasonably disagree on labeling decisions, highlighting the inherent challenge of defining image-quality degradations in low light conditions. Consequently, some apparent false positives may reflect uncertainty in ground-truth labels rather than model error. 
