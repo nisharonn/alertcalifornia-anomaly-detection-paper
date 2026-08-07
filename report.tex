@@ -95,7 +95,7 @@ We first investigate the effectiveness of different representation learning obje
 
 Our overall experimental design consists of four main components: (1) data collection and preprocessing, (2) label definition and annotation, (3) model training under multiple objective functions, and (4) evaluation and selection of a final multi-camera model. A high-level overview of the full pipeline is shown in Figure~\ref{fig:model_pipeline}.
 
-\begin{figure}[h!]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.85\linewidth]{figures/model_pipeline.png}
     \caption{Flowchart outlining the full training pipeline of the model, from baseline models to the final multi-camera model.}
@@ -106,7 +106,7 @@ Our overall experimental design consists of four main components: (1) data colle
 \label{sec:datacollection}
 
 We source the data from cameras in the ALERTCalifornia network. These cameras exhibit variations in weather conditions, lighting, and terrain (as seen in Figure~\ref{fig:level_examples}), making them suitable for training and testing the \Ac{QoS} anomaly detection model. To construct the labeled dataset, we extract still images from cameras over a one-year period: October 1, 2024, to September 30, 2025. We sample frames at a fixed hourly interval by selecting the image closest to the top of each hour. Because camera views may occasionally be adjusted by local emergency operators, we use pan, tilt, and zoom information from the external metadata to maintain visual consistency across the dataset. Specifically, we exclude frames whose values deviate from the camera-specific median by more than 4° in pan, 0.1° in tilt, or 0.1× in zoom. These thresholds are chosen to minimize scene variation across cameras during model training. Table~\ref{tab:frame_counts} describes the size of each dataset after filtering. 
-\begin{table}[h!]
+\begin{table}[H]
 \scriptsize
 \centering
 \begin{threeparttable}
@@ -177,7 +177,7 @@ To train our initial model, we focus on three cameras located in San Diego Count
 
 In the testing set, we introduce three additional cameras: Axis-ToroPeak1 \footnote{\url{https://cameras.alertcalifornia.org/?id=Axis-ToroPeak1}}, Axis-Dewdrop1 \footnote{\url{https://cameras.alertcalifornia.org/?id=Axis-Dewdrop1}}, and Axis-Berryessa \footnote{\url{https://cameras.alertcalifornia.org/?id=Axis-Berryessa}}, which we refer to as Toro Peak, Dew Drop, and Berryessa. In this set, Toro Peak and Dew Drop are seasonal cameras, while Berryessa does not show substantial change across seasons. We select Dew Drop and Berryessa, located in Amador and Yolo Counties in Northern California, to evaluate the model's ability to generalize across geographic regions. Toro Peak, also located in Southern California in Riverside County, is selected to assess seasonal effects in a similar area. This configuration allows us to evaluate model performance across both seasonal variability and geographic context. Example images from each location are shown in Figure~\ref{fig:level_examples}. 
 
-\begin{figure}[h!]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{figures/level_image_grid.png}
     \caption{Representative frames corresponding to each level of the 4-point ordinal scale across all six cameras. Camera locations ordered from top to bottom: Coronado Hills, Mesa Grande, Palomar Observatory, Toro Peak, Berryessa, Dew Drop.}
@@ -222,7 +222,7 @@ We separate each model $\mathbf{z_i} \in \{\mathbf{z_T}, \mathbf{z_D}, \mathbf{z
 
 Each encoder $\mathbf{E_i}$ utilizes a \ac{ViT} architecture to map input images into a lower-dimensional feature space. We initialize all encoders using publicly available ViT-Base weights pretrained on ImageNet-21k and fine-tuned on ILSVRC-2012 \cite{deng2009imagenet, wu2020visual}. By default, a ViT (as implemented by Dosovitskiy et al.) consists of patch embedding, position embedding, transformer encoder, and \ac{MLP} classification head segments (Figure~\ref{fig:vit_model}). We modify our encoder’s architecture by removing the \ac{MLP} classification head (shown in the top orange box in Figure~\ref{fig:vit_model}), so that its outputs come directly from the transformer encoder layer. All outputs are 768-dimensional and all encoders share an identical architecture; they differ only in the values of their weights. 
 
-\begin{figure}[h!]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.9\linewidth]{figures/vit_model.png}
     \caption{Overview of the Vision Transformer (ViT) architecture \cite{dosovitskiy2021an}. Input images are split into patches, embedded, and processed through a transformer encoder. In our framework, the original MLP classification head is removed, and a separate MLP head is applied to the resulting embeddings for anomaly classification.}
@@ -235,7 +235,7 @@ To perform classification, we introduce a separate \ac{MLP} head $\mathbf{H_i} \
 
 We first train each of $\mathbf{E_i} \in \{\mathbf{E_T}, \mathbf{E_D}, \mathbf{E_H}\}$ separately, each with its own objective function. $\mathbf{E_T}$ is trained on the full set of labeled Coronado Hills data, while $\mathbf{E_D}$ and $\mathbf{E_H}$ are trained on the unlabeled Coronado Hills dataset. $\mathbf{E_T}$ is trained using triplet margin loss, $\mathbf{E_D}$ is trained using \ac{DeepSAD} loss, and $\mathbf{E_H}$ is trained using \ac{H-SAD} loss. The various hyperparameters used for each objective are outlined in Table~\ref{tab:hyperparams}. These hyperparameters yield the best separation between classes in the embedding space. Additionally, we utilize hard negative mining while training $\mathbf{E_T}$ to optimize the learning process (see Appendix~\ref{app:mining}). Through this process, we obtain baseline encoders to analyze our data.
 
-\begin{table}[h!]
+\begin{table}[H]
 \centering
 
 \caption{Hyperparameters used for training each encoder.}
@@ -278,7 +278,7 @@ Finally, we train $\mathbf{H'}$ on $\mathbf{I}$ using the same cross-entropy los
 \subsection{Baseline Models}
 In our objective selection process, we train and evaluate each baseline model on the Coronado Hills dataset using 4-fold cross-validation. For each model, we take the mean and standard deviation of training and validation accuracies across folds. We then repeat this process using five randomly selected training seeds and record the average mean and standard deviation. Table~\ref{tab:train_val_accs} summarizes the results of this analysis. Overall, across three objective functions, triplet loss consistently outperforms \ac{DeepSAD} and \ac{H-SAD} in both training and validation sets. 
 
-\begin{table}[h!]
+\begin{table}[H]
 \centering
 
 \caption{Training and validation accuracies for each baseline model. The average mean training accuracy is calculated across 5 seeds, each with four folds.}
@@ -302,7 +302,7 @@ Average validation SD & 0.0105 & 0.0177 & 0.0300 \\
 \subsection{Final Multi-Camera Model}
 
 We adopt triplet loss in our final model architecture due to its superior performance in baseline evaluations. The final multi-camera model is trained on data from Coronado Hills, Palomar Observatory, and Mesa Grande. We further assess intra-dataset performance by evaluating the model on a held-out test set that includes unseen samples from these three locations. Because the distribution of camera frames is imbalanced and skewed towards Normal, we report the balanced accuracy in addition to standard classification metrics. Table~\ref{tab:train_test_accs} presents the results. 
-\begin{table}[h!]
+\begin{table}[H]
 \centering
 
 \caption{Final model performance on training and held-out test.}
@@ -332,7 +332,7 @@ Training accuracy is near-perfect across all three locations, whereas test accur
 \subsection{Generalization Across Camera Locations}
 % To assess the model’s potential to generalize, we examine learned embeddings in the PC1 and PC2 space. Figure~\ref{fig:final_pc_proj} displays the projection, where each point corresponds to a single image in the dataset and is colored according to its associated camera location. The embeddings are computed from the final trained encoder and projected into two dimensions using \ac{PCA}. This visualization directly compares spatial representations across camera sites. 
 
-% \begin{figure}[h!]
+% \begin{figure}[H]
 %     \centering
 %     \includegraphics[width=0.85\linewidth]{figures/final_p1p2.png}
 %     \caption{PC1 vs. PC2 projection of the final model trained using triplet loss, colored by
@@ -342,7 +342,7 @@ Training accuracy is near-perfect across all three locations, whereas test accur
 
 We test generalization beyond the training distribution by evaluating on three new unseen datasets: Berryessa, Dew Drop, and Toro Peak. Table~\ref{tab:camera_accuracies} lists the balanced accuracy, precision, and recall values. 
 
-\begin{table}[h!]
+\begin{table}[H]
 \centering
 
 \caption{Performance on unseen camera test set.}
@@ -368,7 +368,7 @@ $^{*}$Seasonal camera locations.
 
 To further assess the model’s performance independent of a specific decision threshold, we generate \ac{PRC} curves and the corresponding \ac{AUPRC} for each camera location in Figure~\ref{fig:roc_curves}. These curves characterize the tradeoff between precision and recall across all possible decision thresholds, providing additional insight into the model’s ability to distinguish with an imbalanced dataset. 
 
-\begin{figure}[h!]
+\begin{figure}[H]
     \centering
 
     % ================= Row 1 =================
@@ -441,7 +441,7 @@ Performance also varies across individual camera locations within the unseen dat
 
 This trend becomes even more apparent when examining false positive frames from the unseen camera locations, as seen in Figure~\ref{fig:false_positives}. Unlike all other cameras, Berryessa contains a large body of water, which is a visual feature unique to its location. Especially during low light conditions, this water surface resembles a layer of cloud (see Figure~\ref{fig:false_positives}). We hypothesize that this feature likely explains the disproportionately large number of false positives, as it mirrors visual cues that the model associates with \ac{QoS} anomalies. These findings reinforce that the model is capable of generalizing across seasonal and environmental variation when the visual characteristics remain similar to those seen during training. However, performance declines when novel contexts are introduced. 
 
-\begin{figure}[h!]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{figures/false_positives.png}
     \caption{A subset of false positive frames from each of the unseen camera locations.}
@@ -522,7 +522,7 @@ $$
 
 In our implementation, we train on \textit{all} triplets (those with Normal anchors and those with Abnormal anchors) with semi-hard negatives in order to maximize the information gained during training, while also ensuring that our encoder does not degenerate. 
 
-\begin{figure}[h!]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.6\linewidth]{figures/tml.png}
     \caption{A diagram showing how the embeddings of different types of negative points exist in feature space during computation of triplet margin loss. Easy negatives’ embeddings lie outside the margin $\alpha$; they already satisfy the triplet constraint. In contrast, hard negatives’ embeddings lie inside the margin. There are two subtypes: semi-hard negatives, whose embeddings lie further away from the anchor’s than the positive point’s, and very hard negatives, whose embeddings lie closer to the anchor’s than the positive point’s.}
@@ -608,4 +608,6 @@ The final term is a weight regularization term, whose influence is controlled by
 \end{acronym}
 
 \end{document}
+
+
 
