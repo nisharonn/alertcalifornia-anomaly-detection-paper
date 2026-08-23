@@ -191,9 +191,9 @@ To construct our labeled dataset for supervised learning, we design a camera-agn
 
 \begin{itemize}
     \item\textbf{Level 1–Clear:} Normal operation of the camera with no observable obstruction or quality issues. The camera is fully reliable for response operations.
-    \item\textbf{Level 2–Minor:} Translucent obstructions (\<50\% of the \ac{ORR}) cause partial obstruction of the camera’s field of view. The camera remains reliable for response operations.
-    \item\textbf{Level 3–Major:} Opaque obstructions (\<50\% of the \ac{ORR}) cause partial obstruction of the camera’s field of view. The camera may not be reliable for response operations.
-    \item\textbf{Level 4–Severe:} An obstruction covers \>50\% of the \ac{ORR}. The camera is unreliable for response operations.                   
+    \item\textbf{Level 2–Minor:} Translucent obstructions (\textless 50\% of the \ac{ORR}) cause partial obstruction of the camera’s field of view. The camera remains reliable for response operations.
+    \item\textbf{Level 3–Major:} Opaque obstructions (\textgreater 50\% of the \ac{ORR}) cause partial obstruction of the camera’s field of view. The camera may not be reliable for response operations.
+    \item\textbf{Level 4–Severe:} An obstruction covers \textgreater 50\% of the \ac{ORR}. The camera is unreliable for response operations.                   
 \end{itemize}
 
 Four annotators review each image to ensure labeling consistency and reduce subjective bias. The final label is determined by majority opinion, in which at least 3 annotators agree. Images with conflicting or tied labels are separately addressed in a team meeting to reach a consensus. To assess inter-rater agreement, we compute Krippendorff’s $\alpha$ using the ordinal severity labels, obtaining a value of 0.6939. Leveraging Label Studio’s random sampling setting, we complete a total of 6,281 tasks for the training set (see Table~\ref{tab:frame_counts} for complete counts). Figure~\ref{fig:level_examples} highlights examples of each level across cameras using this labeling scheme. 
