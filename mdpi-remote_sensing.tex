@@ -63,6 +63,7 @@
 % Add packages and commands here. The following packages are loaded in our class file: fontenc, inputenc, calc, indentfirst, fancyhdr, graphicx, epstopdf, lastpage, ifthen, float, amsmath, amssymb, lineno, setspace, enumitem, mathpazo, booktabs, titlesec, etoolbox, tabto, xcolor, colortbl, soul, multirow, microtype, tikz, totcount, changepage, attrib, upgreek, array, tabularx, pbox, ragged2e, tocloft, marginnote, marginfix, enotez, amsthm, natbib, hyperref, cleveref, scrextend, url, geometry, newfloat, caption, draftwatermark, seqsplit
 % cleveref: load \crefname definitions after \begin{document}
 \usepackage{acronym}
+\usepackage{threeparttable}
 \graphicspath{ {./figures/} }
 
 %=================================================================
@@ -418,7 +419,7 @@ We adopt triplet loss in our final model architecture due to its superior perfor
 
 \begin{tabular}{lcccc}
 \toprule
-\textbf{Metric} & Coronado Hills & Mesa Grande & Palomar Observatory$^{*}$  & Average  \\
+\textbf{Metric} & \begin{tabular}[c]{@{}c@{}}Coronado\\Hills\end{tabular} & \begin{tabular}[c]{@{}c@{}}Mesa\\Grande\end{tabular} & \begin{tabular}[c]{@{}c@{}}Palomar\\Observatory$^{*}$\end{tabular} & Average  \\
 \midrule
 
 Training balanced accuracy & 0.9980 & 1.0000 & 0.9959 & 0.9980 \\
@@ -500,47 +501,23 @@ Performance also varies across individual camera locations within the unseen dat
     \centering
 
     % ================= Row 1 =================
-    \begin{subfigure}{0.48\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{figures/coronado_hills_prc.png}
-        \caption{Coronado Hills}
-    \end{subfigure}
+    \subfloat[Coronado Hills]{\includegraphics[width=0.48\textwidth]{figures/coronado_hills_prc.png}}
     \hfill
-    \begin{subfigure}{0.48\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{figures/mesa_grande_prc.png}
-        \caption{Mesa Grande}
-    \end{subfigure}
+    \subfloat[Mesa Grande]{\includegraphics[width=0.48\textwidth]{figures/mesa_grande_prc.png}}
 
     \vspace{0.4cm}
 
     % ================= Row 2 =================
-    \begin{subfigure}{0.48\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{figures/palomar_prc.png}
-        \caption{Palomar Observatory}
-    \end{subfigure}
+    \subfloat[Palomar Observatory]{\includegraphics[width=0.48\textwidth]{figures/palomar_prc.png}}
     \hfill
-    \begin{subfigure}{0.48\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{figures/berryessa_prc.png}
-        \caption{Berryessa}
-    \end{subfigure}
+    \subfloat[Berryessa]{\includegraphics[width=0.48\textwidth]{figures/berryessa_prc.png}}
 
     \vspace{0.4cm}
 
     % ================= Row 3 =================
-    \begin{subfigure}{0.48\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{figures/dewdrop_prc.png}
-        \caption{Dew Drop}
-    \end{subfigure}
+    \subfloat[Dew Drop]{\includegraphics[width=0.48\textwidth]{figures/dewdrop_prc.png}}
     \hfill
-    \begin{subfigure}{0.48\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{figures/toropeak_prc.png}
-        \caption{Toro Peak}
-    \end{subfigure}
+    \subfloat[Toro Peak]{\includegraphics[width=0.48\textwidth]{figures/toropeak_prc.png}}
 
     \caption{Precision-recall curves and \ac{AUPRC} across all camera locations for held-out (a-c) and unseen (d-f) camera test sets.}
     \label{fig:roc_curves}
